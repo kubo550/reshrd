@@ -20,7 +20,7 @@ export default function Login() {
 
         try {
             await login(email, password);
-            router.push('/items');
+            router.push('/');
         } catch (e) {
             console.log(e);
             setError('Failed to login, please try again or contact support');

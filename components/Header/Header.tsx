@@ -1,4 +1,4 @@
-import React, {FC} from 'react'
+import React, {FC, useState} from 'react'
 import Link from 'next/link'
 import Image from "next/image";
 import {useAuth} from "../../context/AuthContext";
@@ -11,6 +11,8 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = () => {
     const {currentUser, logout} = useAuth();
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleMenu = () => setIsOpen(!isOpen);
 
     const router = useRouter();
 
@@ -30,13 +32,11 @@ export const Header: FC<HeaderProps> = () => {
             borderBottom: '1px solid #eee'
         }}>
 
-            <a href="https://reshrd.com/" target="_blank" rel="noreferrer"
-               style={{
-                   marginLeft: '20px',
-               }}
-            >
+
+            <Link href={currentUser ? '/' : '/login'}>
                 <Image src={'/logo_white_200x.png'} alt="logo" width={150} height={21}/>
-            </a>
+            </Link>
+
 
             <nav>
                 <ul style={{
@@ -45,24 +45,15 @@ export const Header: FC<HeaderProps> = () => {
                     margin: 0,
                     padding: 0
                 }}>
-                    <li
-                        style={{
-                            marginRight: '0.5rem',
-                            marginLeft: '0.5rem'
-                        }}
-                    >
-                        <Link href="/">Home</Link>
-                    </li>
-
-                    <li
-                        style={{
-                            marginRight: '0.5rem',
-                            marginLeft: '0.5rem'
-                        }}>
-                        <Link href={
-                            currentUser ? '/items' : '/login'
-                        }>Manage your items</Link>
-                    </li>
+                    {currentUser && (
+                        <li
+                            style={{
+                                marginRight: '0.5rem',
+                                marginLeft: '0.5rem'
+                            }}>
+                            <Link href={'/'}>Manage your items</Link>
+                        </li>
+                    )}
 
                     <li
                         style={{
@@ -79,6 +70,16 @@ export const Header: FC<HeaderProps> = () => {
                         }}>
                         <Link href="/contact">Contact us</Link>
                     </li>
+
+                    <a href="https://reshrd.com/" target="_blank" rel="noreferrer"
+                       style={{
+                           marginRight: '0.5rem',
+                           marginLeft: '0.5rem'
+                       }}
+                    >
+                        SHOP
+                    </a>
+
                 </ul>
             </nav>
 

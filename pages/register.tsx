@@ -23,7 +23,7 @@ export default function Register() {
 
         try {
             await register(email, password);
-            router.push('/items');
+            router.push('/');
 
         } catch (e) {
             console.log(e);

@@ -2,7 +2,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import {useState} from "react";
 import {useAuth} from "../context/AuthContext";
-import {reshrdMailer} from "../infrastructure/email-service";
+// import {reshrdMailer} from "../infrastructure/email-service";
 import Mail from "nodemailer/lib/mailer";
 
 export default function Contact() {
@@ -14,16 +14,21 @@ export default function Contact() {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
 
-        const emailConfig = {
+        const emailConfig: Mail.Options = {
             subject: "Qr id contact form",
-            to: process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
+            to: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'qwercy142@gmail.com',
             from: email,
-            sender: 'Contact form',
+            sender: 'Qr id contact form',
             text: message,
-        } as Mail.Options;
+        };
+
+
 
         try {
-            console.log(emailConfig);
+            // await reshrdMailer.send(emailConfig);
+            console.log(
+                'sending email is not implemented yet',
+            )
             setMessage("");
             setEmail("");
 

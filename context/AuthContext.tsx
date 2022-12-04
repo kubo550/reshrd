@@ -8,15 +8,16 @@ import {
 import {auth} from "../config/firebase";
 
 
-type UserType = {
+export type UserType = {
     uid: string,
     email: string | null,
     displayName: string | null,
-} | null;
+    token: string | null
+};
 
 
 interface AuthContextData {
-    currentUser: UserType;
+    currentUser: UserType | null;
     login: (email: string, password: string) => Promise<UserCredential>;
     register: (email: string, password: string) => Promise<UserCredential>;
     logout: () => Promise<void>;
@@ -30,9 +31,10 @@ export const useAuth = () => useContext(AuthContext);
 interface AuthProviderProps {
     children: ReactNode;
 }
+
 export const AuthContextProvider: FC<AuthProviderProps> = ({children}) => {
 
-    const [currentUser, setCurrentUser] = useState<UserType>(null);
+    const [currentUser, setCurrentUser] = useState<UserType | null>(null);
 
     const register = (email: string, password: string) => {
         return createUserWithEmailAndPassword(auth, email, password);
@@ -50,23 +52,24 @@ export const AuthContextProvider: FC<AuthProviderProps> = ({children}) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log(user?.email);
             if (user) {
                 setCurrentUser({
                     uid: user.uid,
                     email: user.email,
                     displayName: user.displayName,
+                    token: user.refreshToken
                 });
-            }else {
+            } else {
                 setCurrentUser(null);
             }
+
         });
         return () => unsubscribe();
 
     }, []);
 
     return (
-        <AuthContext.Provider value={{currentUser, login, logout, register }}>
+        <AuthContext.Provider value={{currentUser, login, logout, register}}>
             {children}
         </AuthContext.Provider>
     );
