@@ -25,7 +25,7 @@ export default function Index() {
                 </Head>
 
                 <main style={{
-                    minHeight: '85vh',
+                    minHeight: '84vh',
                 }}>
 
                     {isLoading && <Spinner size={'xl'} />}
