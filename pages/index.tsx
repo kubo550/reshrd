@@ -5,6 +5,7 @@ import {useQuery} from "react-query";
 import {useAuth} from "../context/AuthContext";
 import {getItems} from "../components/api";
 import {ProductList} from "../components/ProductsList/ProductList";
+import {Spinner} from "@chakra-ui/react";
 
 
 export default function Index() {
@@ -27,7 +28,7 @@ export default function Index() {
                     minHeight: '85vh',
                 }}>
 
-                    {isLoading && <p>Loading...</p>}
+                    {isLoading && <Spinner size={'xl'} />}
 
                     {isError && <p>Error</p>}
 

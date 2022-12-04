@@ -1,106 +1,224 @@
-import React, {FC, useState} from 'react'
-import Link from 'next/link'
-import Image from "next/image";
+import {
+    Box,
+    Flex,
+    Text,
+    IconButton,
+    Button,
+    Stack,
+    Collapse,
+    Link,
+    Popover,
+    PopoverTrigger,
+    useColorModeValue,
+    useDisclosure,
+} from '@chakra-ui/react';
+import {
+    HamburgerIcon,
+    CloseIcon,
+} from '@chakra-ui/icons';
+import {useRouter} from "next/router";
 import {useAuth} from "../../context/AuthContext";
-import {useRouter} from "next/navigation";
+import NextLink from 'next/link';
+import Image from "next/image";
 
 
-interface HeaderProps {
+const navItems = [
+    {
+        label: 'Manage your items',
+        href: '/',
+    },
+    {
+        label: 'How does it work',
+        href: '/about',
+    },
+    {
+        label: 'Contact us',
+        href: '/contact',
+    },{
+        label: 'SHOP',
+        href: 'https://reshrd.com/',
+    },
+] as const;
 
-}
-
-export const Header: FC<HeaderProps> = () => {
+export function Header() {
+    const {isOpen, onToggle} = useDisclosure();
     const {currentUser, logout} = useAuth();
-    const [isOpen, setIsOpen] = useState(false);
-    const toggleMenu = () => setIsOpen(!isOpen);
 
     const router = useRouter();
 
     const handleLogout = async () => {
         await logout();
-        router.push('/login');
+        await router.push('/login');
+    }
+
+
+    return (
+        <Box>
+            <Flex
+                bg={useColorModeValue('white', 'gray.800')}
+                color={useColorModeValue('gray.600', 'white')}
+                minH={'60px'}
+                py={{base: 2}}
+                px={{base: 4}}
+                borderBottom={1}
+                borderStyle={'solid'}
+                borderColor={useColorModeValue('gray.200', 'gray.900')}
+                align={'center'}>
+                <Flex
+                    flex={{base: 1, md: 'auto'}}
+                    ml={{base: -2}}
+                    display={{base: 'flex', md: 'none'}}>
+                    <IconButton
+                        onClick={onToggle}
+                        icon={
+                            isOpen ? <CloseIcon w={3} h={3}/> : <HamburgerIcon w={5} h={5}/>
+                        }
+                        variant={'ghost'}
+                        aria-label={'Toggle Navigation'}
+                    />
+                </Flex>
+                <Flex flex={{base: 1}} justify={{base: 'center', md: 'start'}}>
+                    <NextLink href={currentUser ? '/' : '/login'}>
+                        <Image src={'/logo_white_200x.png'} alt="logo" width={150} height={21}/>
+                    </NextLink>
+
+                    <Flex display={{base: 'none', md: 'flex'}} mx={'auto'}>
+                        <DesktopNav />
+
+                    </Flex>
+                </Flex>
+
+                <Stack
+                    flex={{base: 1, md: 0}}
+                    justify={'flex-end'}
+                    direction={'row'}
+                    spacing={6}>
+                    {!currentUser ? (<>
+                            <NextLink href={'/login'}>
+                                <Button fontSize={'sm'} fontWeight={400} variant={'link'} marginTop={'10px'}>
+                                    Sign In
+                                </Button>
+                            </NextLink>
+                            <NextLink href={'/register'}>
+                                <Button
+                                    display={{base: 'none', md: 'inline-flex'}}
+                                    fontSize={'sm'}
+                                    fontWeight={600}
+                                    color={'white'}
+                                    bg={'pink.400'}
+                                    _hover={{
+                                        bg: 'pink.300',
+                                    }}>
+                                    Sign Up
+                                </Button>
+                            </NextLink>
+                        </>
+                    ) : (
+                        <Flex justify={{base: 'center', md: 'start'}}>
+                            <Text marginTop={'6px'} marginRight={'6px'} display={{base: 'none', md: 'flex'}}>
+                                {currentUser?.email}
+                            </Text>
+                            <Button onClick={handleLogout} fontSize={'sm'} fontWeight={400}>Log out</Button>
+                        </Flex>
+                    )}
+                </Stack>
+            </Flex>
+
+            <Collapse in={isOpen} animateOpacity>
+                <MobileNav/>
+            </Collapse>
+        </Box>
+    );
+}
+
+const DesktopNav = () => {
+    const linkColor = useColorModeValue('gray.600', 'gray.200');
+    const linkHoverColor = useColorModeValue('gray.800', 'white');
+    const linkActiveColor = useColorModeValue('gray.900', 'black.300');
+
+
+    const router = useRouter()
+
+
+    const isCurrentPath = (path: string) => {
+        return router.pathname === path
     }
 
     return (
+        <Stack direction={'row'} spacing={4}>
+            {navItems.map((navItem) => {
+                const isCurrent = isCurrentPath(navItem.href);
 
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0 20px',
-            height: '60px',
-            borderBottom: '1px solid #eee'
-        }}>
+                const isExternal = navItem.href.startsWith('http');
 
+                return (
+                    <Box key={navItem.label}>
+                        <Popover trigger={'hover'} placement={'bottom-start'}>
+                            <PopoverTrigger>
+                                {isExternal ? (
+                                    <a href={navItem.href} target={'_blank'} rel={'noreferrer'}>
+                                        {navItem.label}
+                                    </a>
+                                    ) : (
+                                    <Link
+                                        p={2}
+                                        fontSize={'sm'}
+                                        fontWeight={500}
+                                        color={isCurrent ? linkActiveColor: linkColor}
+                                        _hover={{
+                                            textDecoration: 'none',
+                                            color: linkHoverColor,
+                                        }}
+                                        as={NextLink}
+                                        href={navItem.href}
+                                    >
 
-            <Link href={currentUser ? '/' : '/login'}>
-                <Image src={'/logo_white_200x.png'} alt="logo" width={150} height={21}/>
-            </Link>
+                                        {navItem.label}
+                                    </Link>
+                                )}
+                            </PopoverTrigger>
+                        </Popover>
+                    </Box>
+                );
+            })}
+        </Stack>
+    );
+};
 
+const MobileNav = () => {
+    return (
+        <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{md: 'none'}}>
+            {navItems.map((navItem) => (
+                <MobileNavItem key={navItem.label} {...navItem} />
+            ))}
+        </Stack>
+    );
+};
 
-            <nav>
-                <ul style={{
-                    display: 'flex',
-                    listStyle: 'none',
-                    margin: 0,
-                    padding: 0
-                }}>
-                    {currentUser && (
-                        <li
-                            style={{
-                                marginRight: '0.5rem',
-                                marginLeft: '0.5rem'
-                            }}>
-                            <Link href={'/'}>Manage your items</Link>
-                        </li>
-                    )}
+const MobileNavItem = ({label, href}: { label: string, href: string }) => {
+    const isExternal = href.startsWith('http');
 
-                    <li
-                        style={{
-                            marginRight: '0.5rem',
-                            marginLeft: '0.5rem'
-                        }}>
-                        <Link href="/about">How does it work</Link>
-                    </li>
-
-                    <li
-                        style={{
-                            marginRight: '0.5rem',
-                            marginLeft: '0.5rem'
-                        }}>
-                        <Link href="/contact">Contact us</Link>
-                    </li>
-
-                    <a href="https://reshrd.com/" target="_blank" rel="noreferrer"
-                       style={{
-                           marginRight: '0.5rem',
-                           marginLeft: '0.5rem'
-                       }}
-                    >
-                        SHOP
+    const color = useColorModeValue('gray.600', 'gray.200');
+    return (
+        <Stack spacing={4}>
+            {
+                isExternal ? (
+                    <a href={href} target={'_blank'} rel={'noreferrer'}>
+                        <Text fontWeight={600} color={color}>
+                            {label}
+                        </Text>
                     </a>
-
-                </ul>
-            </nav>
-
-            <span>
-
-                {currentUser ? (
-                    <>
-                        <span style={{marginRight: '0.5rem'}}>{currentUser.email}</span>
-                        <button onClick={handleLogout}>Logout</button>
-                    </>
                 ) : (
-                    <>
-                        <Link href='/login'>Login</Link>
+                    <NextLink href={href}>
+                        <Flex py={2} as={Link} justify={'space-between'} align={'center'} _hover={{textDecoration: 'none',}}>
+                            <Text fontWeight={600} color={color}>
+                                {label}
+                            </Text>
+                        </Flex>
+                    </NextLink>
+                )
+            }
 
-                        <Link style={{
-                            marginLeft: '0.5rem'
-                        }} href={'/register'}>Register</Link>
-                    </>
-
-                )}
-            </span>
-        </div>
+        </Stack>
     );
 };
