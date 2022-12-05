@@ -83,7 +83,7 @@ export default function Contact() {
                                                 color="#DCE2FF"
                                                 _hover={{ border: '2px solid #1C6FEB' }}
                                             >
-                                                +91-988888888
+                                                +48 988888888
                                             </Button>
                                             <Button
                                                 size="md"
@@ -93,7 +93,7 @@ export default function Contact() {
                                                 color="#DCE2FF"
                                                 _hover={{ border: '2px solid #1C6FEB' }}
                                             >
-                                                hello@abc.com
+                                                contact@reshrd.com
                                             </Button>
                                             <Button
                                                 size="md"

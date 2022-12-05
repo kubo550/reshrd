@@ -5,7 +5,7 @@ import {useQuery} from "react-query";
 import {useAuth} from "../context/AuthContext";
 import {getItems} from "../components/api";
 import {ProductList} from "../components/ProductsList/ProductList";
-import {Spinner} from "@chakra-ui/react";
+import {Container, Spinner, Text} from "@chakra-ui/react";
 
 
 export default function Index() {
@@ -14,6 +14,8 @@ export default function Index() {
     const {data, isLoading, isError} = useQuery('items', () => getItems(currentUser), {
         enabled: !!currentUser
     });
+
+    const haveNoItems = data && data.items.length === 0;
 
     return (
         <ProtectedRoute type={'onlyAuth'}>
@@ -24,17 +26,20 @@ export default function Index() {
                     <link rel="icon" href="/favicon.ico"/>
                 </Head>
 
-                <main style={{
-                    minHeight: '84vh',
-                }}>
+                <Container minH={'84vh'} maxW={'7xl'} p="12">
 
-                    {isLoading && <Spinner size={'xl'} />}
+                    {isLoading && <Spinner size={'xl'}/>}
 
                     {isError && <p>Error</p>}
 
                     {data && <ProductList products={data.items} customerId={data.customerId}/>}
 
-                </main>
+                    {
+                        haveNoItems && <Text>You don&lsquo;t have any items yet</Text>
+                    }
+
+                </Container>
+
 
             </div>
         </ProtectedRoute>

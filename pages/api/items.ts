@@ -51,10 +51,15 @@ export default async function handler(
     try {
         const email = req.query.email as string;
         const customer = await getCustomerByEmail(email);
+
         if (!customer) {
-            res.status(404).json({message: 'Customer not found'});
+            // res.status(404).json({message: 'Customer not found'});
+            res.status(200).json({items: [], customerId: null});
+
             return;
+
         }
+
 
         const items = customer.items;
 

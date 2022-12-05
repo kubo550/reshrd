@@ -1,10 +1,13 @@
 import {Product} from "../../types/products";
 import _ from "lodash";
-import {ProductItem} from "./ProductItem";
-import {useCallback, useState} from "react";
+import { useCallback, useState} from "react";
 import {saveProducts} from "../api";
-import {useAuth} from "../../context/AuthContext";
 
+import {
+    Heading,
+    Button,
+} from '@chakra-ui/react';
+import {ProductItem} from "./ProductItem";
 
 interface ProductListProps {
     products: Product[];
@@ -55,17 +58,40 @@ export const ProductList = ({products, customerId}: ProductListProps) => {
     }
 
     return (
-        <div>
+        <>
+            <Heading as="h1">
+                Your Awesome Re:shrd Items
+                {
+                    hasUnsavedChanges() && <Button
+                        px={4}
+                        marginLeft={'1%'}
+                        fontSize={'sm'}
+                        rounded={'full'}
+                        bg={'green.400'}
+                        color={'white'}
+                        _hover={{
+                            bg: 'green.500',
+                        }}
+                        _focus={{
+                            bg: 'green.500',
+                        }}
+                        onClick={handleSave}>
+                        Save Changes
+                    </Button>
+                }
+            </Heading>
             {
-                hasUnsavedChanges() && <button onClick={handleSave}>save changes</button>
+                localState.map(product => (
+                    <ProductItem product={product}
+                                 onEditName={handleEditName(product.codeId)}
+                                 onEditLink={handleEditLink(product.codeId)}
+                                 key={product.codeId}
+                    />
+                ))
             }
 
-            {localState.map((product, i) => (
+        </>
+    )
+}
 
-                <ProductItem product={product} onEditName={handleEditName(product.codeId)}
-                             onEditLink={handleEditLink(product.codeId)} key={i}/>
 
-            ))}
-        </div>
-    );
-};
