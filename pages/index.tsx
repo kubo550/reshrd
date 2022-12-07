@@ -26,7 +26,7 @@ export default function Index() {
                     <link rel="icon" href="/favicon.ico"/>
                 </Head>
 
-                <Container minH={'84vh'} maxW={'7xl'} p="12">
+                <Container minH={'88vh'} maxW={'7xl'} p="12">
 
                     {isLoading && <Spinner size={'xl'}/>}
 

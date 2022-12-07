@@ -4,14 +4,12 @@ import _ from 'lodash';
 import isHtml from 'is-html';
 
 
-class EmailService {
+export class EmailService {
     private sender: Mail;
 
-    constructor(smtpServer: string, user: string, password: string) {
+    constructor(user: string, password: string) {
         this.sender = nodeMailer.createTransport({
-            host: smtpServer,
-            port: 465,
-            secure: true,
+            service: 'gmail',
             auth: {
                 user: user,
                 pass: password
@@ -30,11 +28,6 @@ class EmailService {
     }
 }
 
-export const reshrdMailer = new EmailService(
-    'smtp.gmail.com',
-    process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
-    process.env.NEXT_PUBLIC_RESHRD_EMAIL_PASSWORD!
-);
 
 function isToFieldValid(emailConfig: Mail.Options) {
     const isNonEmptyListOfAddresses = _.isArray(emailConfig.to) && emailConfig.to.length > 0;

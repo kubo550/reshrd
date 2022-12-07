@@ -1,161 +1,142 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import {useState} from "react";
-import {useAuth} from "../context/AuthContext";
-// import {reshrdMailer} from "../infrastructure/email-service";
-import Mail from "nodemailer/lib/mailer";
 import {
-    Container,
-    Flex,
-    Box,
-    Heading,
-    Text,
-    IconButton,
     Button,
-    VStack,
-    HStack,
-    Wrap,
-    WrapItem,
+    Container,
     FormControl,
+    FormErrorMessage,
     FormLabel,
+    Heading,
     Input,
-    InputGroup,
-    InputLeftElement,
+    Text,
     Textarea,
-} from '@chakra-ui/react';
+    useToast,
+} from "@chakra-ui/react";
+import {type ChangeEvent, useState} from "react";
+import {useAuth} from "../context/AuthContext";
+import {sendContactForm} from "../components/api";
+
+
+const initialTouched = {message: false, email: false, subject: false};
+
 
 export default function Contact() {
     const {currentUser} = useAuth();
-    const [email, setEmail] = useState(currentUser?.email || "");
-    const [message, setMessage] = useState("");
+
+    const initValues = {email: currentUser?.email || "", subject: "", message: ""};
+
+    const initState = {isLoading: false, error: "", values: initValues};
 
 
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
+    const toast = useToast();
+    const [state, setState] = useState(initState);
+    const [touched, setTouched] = useState(initialTouched);
 
-        const emailConfig: Mail.Options = {
-            subject: "Qr id contact form",
-            to: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'qwercy142@gmail.com',
-            from: email,
-            sender: 'Qr id contact form',
-            text: message,
-        };
+    const {values, isLoading, error} = state;
 
+    const onBlur = ({target}: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) =>
+        setTouched((prev) => ({...prev, [target.name]: true}));
 
+    const handleChange = ({target}: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) =>
+        setState((prev) => ({
+            ...prev,
+            values: {
+                ...prev.values,
+                [target.name]: target.value,
+            },
+        }));
 
+    const onSubmit = async () => {
+        setState((prev) => ({
+            ...prev,
+            isLoading: true,
+        }));
         try {
-            // await reshrdMailer.send(emailConfig);
-            console.log(
-                'sending email is not implemented yet',
-            )
-            setMessage("");
-            setEmail("");
-
-        } catch (e) {
-
+            await sendContactForm(values);
+            setTouched(initialTouched);
+            setState(initState);
+            toast({
+                title: "Message sent.",
+                status: "success",
+                duration: 2000,
+                position: "top",
+            });
+        } catch (error) {
+            setState((prev) => ({
+                ...prev,
+                isLoading: false,
+                error: (error as any).message,
+            }));
         }
-    }
+    };
 
     return (
-        <Container maxW="full" height={'84vh'} mt={0} centerContent overflow="hidden">
-            <Flex>
-                <Box
-                    bg="#02054B"
-                    color="white"
-                    borderRadius="lg"
-                    m={{ sm: 4, md: 16, lg: 10 }}
-                    p={{ sm: 5, md: 5, lg: 16 }}>
-                    <Box p={4}>
-                        <Wrap spacing={{ base: 20, sm: 3, md: 5, lg: 20 }}>
-                            <WrapItem>
-                                <Box>
-                                    <Heading>Contact</Heading>
-                                    <Text mt={{ sm: 3, md: 3, lg: 5 }} color="gray.500">
-                                        Fill up the form below to contact
-                                    </Text>
-                                    <Box py={{ base: 5, sm: 5, md: 8, lg: 10 }}>
-                                        <VStack pl={0} spacing={3} alignItems="flex-start">
-                                            <Button
-                                                size="md"
-                                                height="48px"
-                                                width="200px"
-                                                variant="ghost"
-                                                color="#DCE2FF"
-                                                _hover={{ border: '2px solid #1C6FEB' }}
-                                            >
-                                                +48 988888888
-                                            </Button>
-                                            <Button
-                                                size="md"
-                                                height="48px"
-                                                width="200px"
-                                                variant="ghost"
-                                                color="#DCE2FF"
-                                                _hover={{ border: '2px solid #1C6FEB' }}
-                                            >
-                                                contact@reshrd.com
-                                            </Button>
-                                            <Button
-                                                size="md"
-                                                height="48px"
-                                                width="200px"
-                                                variant="ghost"
-                                                color="#DCE2FF"
-                                                _hover={{ border: '2px solid #1C6FEB' }}
-                                            >
-                                                Gdańsk, Poland
-                                            </Button>
-                                        </VStack>
-                                    </Box>
-                                    <HStack
-                                        mt={{ lg: 10, md: 10 }}
-                                        spacing={5}
-                                        px={5}
-                                        alignItems="flex-start">
-                                    </HStack>
-                                </Box>
-                            </WrapItem>
-                            <WrapItem>
-                                <Box bg="white" borderRadius="lg">
-                                    <Box m={8} color="#0B0E3F">
-                                        <VStack spacing={5}>
-                                            <FormControl id="name">
-                                                <FormLabel>Mail</FormLabel>
-                                                <InputGroup borderColor="#E0E1E7">
-                                                    <InputLeftElement
-                                                        pointerEvents="none"
-                                                    />
-                                                    <Input type="text" size="md" value={email} onChange={e => setEmail(e.target.value)} />
-                                                </InputGroup>
-                                            </FormControl>
-                                            <FormControl id="name">
-                                                <FormLabel>Message</FormLabel>
-                                                <Textarea
-                                                    placeholder="Type your message here"
-                                                    borderColor="gray.300"
-                                                    height={200}
-                                                    _hover={{
-                                                        borderRadius: 'gray.300',
-                                                    }}
-                                                />
-                                            </FormControl>
-                                            <FormControl id="name" float="right">
-                                                <Button
-                                                    variant="solid"
-                                                    bg="#0D74FF"
-                                                    color="white"
-                                                    _hover={{}}>
-                                                    Send Message
-                                                </Button>
-                                            </FormControl>
-                                        </VStack>
-                                    </Box>
-                                </Box>
-                            </WrapItem>
-                        </Wrap>
-                    </Box>
-                </Box>
-            </Flex>
+        <Container maxW="450px" minH={'88vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}
+                   flexDirection={'column'}>
+            <Heading>Contact Us</Heading>
+            {error && (
+                <Text color="red.300" my={4} fontSize="xl">
+                    {error}
+                </Text>
+            )}
+
+
+            <FormControl isRequired isInvalid={touched.email && !values.email} mb={5}>
+                <FormLabel>Email</FormLabel>
+                <Input
+                    type="email"
+                    name="email"
+                    errorBorderColor="red.300"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                <FormErrorMessage>Required</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+                mb={5}
+                isRequired
+                isInvalid={touched.subject && !values.subject}
+            >
+                <FormLabel>Subject</FormLabel>
+                <Input
+                    type="text"
+                    name="subject"
+                    errorBorderColor="red.300"
+                    value={values.subject}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                <FormErrorMessage>Required</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+                isRequired
+                isInvalid={touched.message && !values.message}
+                mb={5}
+            >
+                <FormLabel>Message</FormLabel>
+                <Textarea
+                    name="message"
+                    rows={4}
+                    errorBorderColor="red.300"
+                    value={values.message}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                <FormErrorMessage>Required</FormErrorMessage>
+            </FormControl>
+
+            <Button
+                variant="outline"
+                colorScheme="blue"
+                isLoading={isLoading}
+                disabled={
+                    !values.email || !values.subject || !values.message
+                }
+                onClick={onSubmit}
+            >
+                Submit
+            </Button>
         </Container>
     );
 }
