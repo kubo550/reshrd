@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styles from '../styles/Home.module.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import NextLink from "next/link";
 import {useAuth} from "../context/AuthContext";
 import {useRouter} from "next/navigation";
@@ -16,20 +16,23 @@ import {
     Button,
     Heading,
     Text,
-    useColorModeValue,
+    useColorModeValue, Spinner,
 } from '@chakra-ui/react';
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const router = useRouter();
 
     const {login} = useAuth();
 
-    const handleLogin = async (e: any) => {
-        e.preventDefault();
+
+    const handleLogin = async (e?: any) => {
+        setLoading(true)
+        e?.preventDefault();
 
         try {
             await login(email, password);
@@ -37,10 +40,13 @@ export default function Login() {
         } catch (e) {
             console.log(e);
             setError('Failed to login, please try again or contact support');
+            setEmail('');
+            setPassword('');
+        } finally {
+            setLoading(false)
         }
-
-
     };
+
 
     return (
         <ProtectedRoute type={'onlyGuest'}>
@@ -52,55 +58,63 @@ export default function Login() {
                 </Head>
 
                 <main className={styles.main}>
+                    <form>
+                        <Flex
+                            align={'center'}
+                            justify={'center'}
+                            bg={useColorModeValue('gray.50', 'gray.800')}>
+                            <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+                                <Stack align={'center'}>
+                                    <Heading fontSize={{sm: 'xl', md: '4xl'}}>Sign in to your account</Heading>
+                                    <Text fontSize={{sm: 'sm', md: 'lg'}} color={'gray.600'}>
+                                        to manage your reshrd items ✌️
+                                    </Text>
+                                </Stack>
+                                <Box
+                                    rounded={'lg'}
+                                    bg={useColorModeValue('white', 'gray.700')}
+                                    boxShadow={'lg'}
+                                    p={8}>
+                                    <Stack spacing={4} width={{sm: '300px', md: '400px'}}>
+                                        <FormControl id="email">
+                                            <FormLabel>Email address</FormLabel>
+                                            <Input type="email" value={email} onChange={e => setEmail(e.target.value)}/>
+                                        </FormControl>
+                                        <FormControl id="password">
+                                            <FormLabel>Password</FormLabel>
+                                            <Input type="password" value={password}
+                                                   onChange={e => setPassword(e.target.value)}/>
+                                        </FormControl>
 
-                    <Flex
-                        align={'center'}
-                        justify={'center'}
-                        bg={useColorModeValue('gray.50', 'gray.800')}>
-                        <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-                            <Stack align={'center'}>
-                                <Heading fontSize={{sm: 'xl', md: '4xl'}}>Sign in to your account</Heading>
-                                <Text fontSize={{sm: 'sm',md: 'lg'}} color={'gray.600'}>
-                                    to manage your reshrd items ✌️
-                                </Text>
-                            </Stack>
-                            <Box
-                                rounded={'lg'}
-                                bg={useColorModeValue('white', 'gray.700')}
-                                boxShadow={'lg'}
-                                p={8}>
-                                <Stack spacing={4} width={{sm: '300px', md: '400px'}}>
-                                    <FormControl id="email">
-                                        <FormLabel>Email address</FormLabel>
-                                        <Input type="email" value={email} onChange={e => setEmail(e.target.value)} />
-                                    </FormControl>
-                                    <FormControl id="password">
-                                        <FormLabel>Password</FormLabel>
-                                        <Input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-                                    </FormControl>
+                                        <Stack spacing={10} pt={2}>
+                                            <Button
+                                                bg={'blue.400'}
+                                                color={'white'}
+                                                _hover={{
+                                                    bg: 'blue.500',
+                                                }}
+                                                disabled={!email || !password}
+                                                onClick={handleLogin}
+                                                type={'submit'}
+                                            >
 
-                                    <Stack spacing={10} pt={2}>
-                                        <Button
-                                            bg={'blue.400'}
-                                            color={'white'}
-                                            _hover={{
-                                                bg: 'blue.500',
-                                            }}
-                                        onClick={handleLogin}>
-                                            Sign in
-                                        </Button>
+                                                {
+                                                    loading ? <Spinner/> : 'Sign in'
+                                                }
+                                            </Button>
 
-                                        <Stack pt={6}>
-                                            <Text align={'center'}>
-                                                Don&lsquo;t have an account? <Link as={NextLink} href={'/register'} color={'blue.400'}>Sign up</Link>
-                                            </Text>
+                                            <Stack pt={6}>
+                                                <Text align={'center'}>
+                                                    Don&lsquo;t have an account? <Link as={NextLink} href={'/register'}
+                                                                                       color={'blue.400'}>Sign up</Link>
+                                                </Text>
+                                            </Stack>
                                         </Stack>
                                     </Stack>
-                                </Stack>
-                            </Box>
-                        </Stack>
-                    </Flex>
-
+                                </Box>
+                            </Stack>
+                        </Flex>
+                    </form>
                 </main>
 
             </div>

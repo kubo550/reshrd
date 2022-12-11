@@ -27,17 +27,23 @@ const navItems = [
     {
         label: 'Manage your items',
         href: '/',
+        protected: true,
     },
     {
         label: 'How does it work',
         href: '/about',
+        protected: false,
     },
     {
         label: 'Contact us',
         href: '/contact',
+        protected: false,
+
     }, {
         label: 'SHOP',
         href: 'https://reshrd.com/',
+        protected: false,
+
     },
 ] as const;
 
@@ -87,7 +93,7 @@ export function Header() {
                     </NextLink>
 
                     <Flex display={{base: 'none', md: 'flex'}} mx={'auto'}>
-                        <DesktopNav/>
+                        <DesktopNav />
                     </Flex>
                 </Flex>
 
@@ -107,11 +113,7 @@ export function Header() {
                                     display={{base: 'none', md: 'inline-flex'}}
                                     fontSize={'sm'}
                                     fontWeight={600}
-                                    color={'white'}
-                                    bg={'pink.400'}
-                                    _hover={{
-                                        bg: 'pink.300',
-                                    }}>
+                                >
                                     Sign Up
                                 </Button>
                             </NextLink>
@@ -138,7 +140,7 @@ const DesktopNav = () => {
     const linkColor = useColorModeValue('gray.600', 'gray.200');
     const linkHoverColor = useColorModeValue('gray.800', 'white');
     const linkActiveColor = useColorModeValue('gray.900', 'black.300');
-
+    const {currentUser} = useAuth();
 
     const router = useRouter()
 
@@ -173,7 +175,7 @@ const DesktopNav = () => {
                                             color: linkHoverColor,
                                         }}
                                         as={NextLink}
-                                        href={navItem.href}
+                                        href={navItem.protected ? !!currentUser ? navItem.href : '/login' : navItem.href}
                                     >
 
                                         {navItem.label}
@@ -192,7 +194,7 @@ const MobileNav: FC<{ hideMenu: () => void }> = ({hideMenu}) => {
     return (
         <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{md: 'none'}}>
             {navItems.map((navItem) => (
-                <MobileNavItem key={navItem.label} {...navItem}  hideMenu={hideMenu} />
+                <MobileNavItem key={navItem.label} {...navItem} hideMenu={hideMenu}/>
             ))}
         </Stack>
     );

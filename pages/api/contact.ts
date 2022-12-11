@@ -48,6 +48,7 @@ export default async function handler(
         res.status(200).json({ message: "Message sent successfully" });
     }
     catch (e) {
+        console.log((e as any).message)
         res.status(500).json({ message: "Message failed to send" });
     }
 }

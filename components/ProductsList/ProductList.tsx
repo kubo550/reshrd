@@ -5,7 +5,7 @@ import {saveProducts} from "../api";
 
 import {
     Heading,
-    Button,
+    Button, Spinner,
 } from '@chakra-ui/react';
 import {ProductItem} from "./ProductItem";
 
@@ -18,6 +18,7 @@ export const ProductList = ({products, customerId}: ProductListProps) => {
     const [actualDbState, setActualDbState] = useState(products);
     const [localState, setLocalState] = useState(products);
     const [userId] = useState(customerId);
+    const [loading, setLoading] = useState(false);
 
 
     const handleEditLink = (codeId: string) => (link: string) => {
@@ -48,19 +49,21 @@ export const ProductList = ({products, customerId}: ProductListProps) => {
 
 
     const handleSave = async () => {
+        setLoading(true)
         try {
-            const response = await saveProducts(userId, localState);
+            await saveProducts(userId, localState);
             setActualDbState(localState);
         } catch (e) {
             console.log(e);
-
+        } finally {
+            setLoading(false)
         }
     }
 
     return (
         <>
             <Heading as="h1">
-                Your Awesome Re:shrd Items
+                Your Awesome RE:SHRD Items
                 {
                     hasUnsavedChanges() && <Button
                         px={4}
@@ -69,6 +72,7 @@ export const ProductList = ({products, customerId}: ProductListProps) => {
                         rounded={'full'}
                         bg={'green.400'}
                         color={'white'}
+                        minWidth={'127px'}
                         _hover={{
                             bg: 'green.500',
                         }}
@@ -76,7 +80,7 @@ export const ProductList = ({products, customerId}: ProductListProps) => {
                             bg: 'green.500',
                         }}
                         onClick={handleSave}>
-                        Save Changes
+                        {loading ? <Spinner /> : 'Save Changes'}
                     </Button>
                 }
             </Heading>

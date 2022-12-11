@@ -69,7 +69,7 @@ export const ProductItem = ({product, onEditName, onEditLink}: ProductItemProps)
                         <Input
                             variant={'solid'}
                             borderWidth={1}
-                            color={'gray.800'}
+                            color={'gray.200'}
                             _placeholder={{
                                 color: 'gray.400',
                             }}
@@ -87,7 +87,7 @@ export const ProductItem = ({product, onEditName, onEditLink}: ProductItemProps)
                         <Input
                             variant={'solid'}
                             borderWidth={1}
-                            color={'gray.800'}
+                            color={'gray.200'}
                             _placeholder={{
                                 color: 'gray.400',
                             }}
