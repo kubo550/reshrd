@@ -21,17 +21,17 @@ import {
     Link
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import {GetServerSidePropsContext} from "next";
 
-export default function Register() {
+export default function Register({reqEmail}: {reqEmail: string}) {
 
-    const [email, setEmail] = useState("");
+    const router = useRouter();
+    const [email, setEmail] = useState(reqEmail || '');
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
     const [error, setError] = useState("");
 
     const {register} = useAuth();
-    const router = useRouter();
-
     const handleRegister = async (e: any) => {
         e.preventDefault();
         setError("");
@@ -146,4 +146,13 @@ export default function Register() {
             </div>
         </ProtectedRoute>
     );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const email = context.query.email
+    return {
+        props: {
+           reqEmail: email
+        },
+    }
 }

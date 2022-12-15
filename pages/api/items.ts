@@ -1,6 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {db} from "../../config/firebase";
-import { collection, getDocs, doc, updateDoc} from "@firebase/firestore";
+import { collection, getDocs, doc, updateDoc, addDoc} from "@firebase/firestore";
 
 export async function getCustomers() {
     const customerRef = collection(db, 'customers');
@@ -32,6 +32,53 @@ export async function getCustomerByEmail(email: string | null) {
     }
     const customers = await getCustomers();
     return customers.find(customer => customer.email === email);
+}
+
+type DbItem = {
+    codeId: string,
+    productId: string,
+    imageUrl: string,
+    linkUrl: string,
+    name: string,
+    title: string
+};
+
+type DbCustomer = {
+    email: string,
+    createdAt: string,
+    items: DbItem[]
+}
+
+
+export async function createNewCustomer(customerEmail: string, customerNewProducts: DbItem[]) {
+    const customerRef = collection(db, 'customers');
+
+    const newCustomer: DbCustomer = {
+        email: customerEmail,
+        createdAt: new Date().toISOString(),
+        items: customerNewProducts
+    }
+
+    const docRef = await addDoc(customerRef, newCustomer);
+    console.log("Document written with ID: ", docRef.id);
+}
+
+
+export async function updateCustomer(customer: DbCustomer, customerAllProducts: DbItem[]) {
+    const customerRef = collection(db, 'customers');
+    const customers = await getDocs(customerRef);
+
+    const customerDoc = customers.docs.find(doc => doc.data().email === customer.email);
+
+    if (!customerDoc) {
+        return
+    }
+
+    const customerDocRef = doc(db, 'customers', customerDoc.id);
+
+    await updateDoc(customerDocRef, {
+        items: customerAllProducts
+    });
 }
 
 export default async function handler(

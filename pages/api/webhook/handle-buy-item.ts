@@ -1,6 +1,20 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {db} from "../../../config/firebase";
-import {addDoc, collection} from "@firebase/firestore";
+import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../items";
+import {sendInvitationEmail} from "../../../infrastructure/email-utils";
+
+
+const toDbItemsFormat = (item: any) => {
+    const codeId = createRandomId();
+
+    return {
+        codeId,
+        title: item.name,
+        productId: item.product_id,
+        imageUrl: 'https://cdn.shopify.com/s/files/1/0671/8187/1393/products/1-1.jpg?v=1669923158',
+        linkUrl: '',
+        name: '',
+    }
+};
 
 
 export default async function handler(
@@ -8,26 +22,24 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        const customerId = createRandomId();
 
-        const customer = {
-            id: customerId,
-            email: 'test@test.com',
-            createdAt: '2022-11-28T00:00:00.000Z',
-            updatedAt: '2022-11-28T00:00:00.000Z',
-            items: [
-                {
-                    id: 'item-1',
-                    linkUrl: 'https://www.amazon.com/Apple-MacBook-13-inch-256GB-Storage/dp/B08N5Z3Q7Q/ref=sr_1_1?dchild=1&keywords=macbook+pro&qid=1638080003&sr=8-1',
-                }
-            ]
+        const customerEmail = 'kubo550@wp.pl' // req.body.customer.email
+        console.log('email', customerEmail)
+
+        const customerNewProducts = req.body.line_items.map(toDbItemsFormat);
+
+        const customer = await getCustomerByEmail(customerEmail);
+
+        if (!customer) {
+            await createNewCustomer(customerEmail, customerNewProducts);
+            await sendInvitationEmail(customerEmail);
+        } else {
+            await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
+            await sendInvitationEmail(customerEmail);
         }
-        const customerRef = collection(db, 'customers');
-        const docRef = await addDoc(customerRef, customer);
-        console.log("Document written with ID: ", docRef.id);
 
 
-        res.status(200).json({success: docRef.id})
+        res.status(200).json({success: true})
     } catch (e) {
         console.error(e)
         res.status(500).json({success: false})
@@ -36,5 +48,6 @@ export default async function handler(
 
 
 function createRandomId() {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return Math.floor(10000 + Math.random() * 900000).toString();
+
 }

@@ -69,7 +69,7 @@ export default function Contact() {
     };
 
     return (
-        <Container maxW="450px" minH={'88vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}
+        <Container maxW="450px" display={'flex'} justifyContent={'center'} alignItems={'center'}
                    flexDirection={'column'}>
             <Heading>Contact Us</Heading>
             {error && (
