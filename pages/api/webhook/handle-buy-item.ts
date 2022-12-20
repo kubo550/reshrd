@@ -22,9 +22,8 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-
-        const customerEmail = 'kubo550@wp.pl' // req.body.customer.email
-        console.log('email', customerEmail)
+        const customerEmail = 'test@wp.pl';
+        // const customerEmail = req.body.customer.email
 
         const customerNewProducts = req.body.line_items.map(toDbItemsFormat);
 
@@ -32,7 +31,7 @@ export default async function handler(
 
         if (!customer) {
             await createNewCustomer(customerEmail, customerNewProducts);
-            await sendInvitationEmail(customerEmail);
+            // await sendInvitationEmail(customerEmail);
         } else {
             await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
             await sendInvitationEmail(customerEmail);

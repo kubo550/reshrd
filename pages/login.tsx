@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styles from '../styles/Home.module.css'
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import NextLink from "next/link";
 import {useAuth} from "../context/AuthContext";
 import {useRouter} from "next/navigation";
@@ -16,37 +16,46 @@ import {
     Button,
     Heading,
     Text,
-    useColorModeValue, Spinner,
+    useColorModeValue, FormErrorMessage, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
+import * as yup from "yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+
+const schema = yup.object().shape({
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required()
+});
+
+type LoginFormInputs = {
+    email: string;
+    password: string;
+};
 
 export default function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-
     const router = useRouter();
-
     const {login} = useAuth();
+    const [showingPass, setShowingPass] = useState(false);
 
 
-    const handleLogin = async (e?: any) => {
-        setLoading(true)
-        e?.preventDefault();
+    const {
+        handleSubmit,
+        register,
+        formState: {errors, isSubmitting}
+    } = useForm<LoginFormInputs>({resolver: yupResolver(schema)})
 
+    const onSubmit = async (data: LoginFormInputs) => {
+        setError('');
         try {
-            await login(email, password);
+            await login(data.email, data.password);
             router.push('/');
         } catch (e) {
             console.log(e);
             setError('Failed to login, please try again or contact support');
-            setEmail('');
-            setPassword('');
-        } finally {
-            setLoading(false)
         }
     };
-
 
     return (
         <ProtectedRoute type={'onlyGuest'}>
@@ -58,49 +67,74 @@ export default function Login() {
                 </Head>
 
                 <main className={styles.main}>
-                    <form>
+                    <form onSubmit={handleSubmit(onSubmit)}>
                         <Flex
                             align={'center'}
                             justify={'center'}
-                            bg={useColorModeValue('gray.50', 'gray.800')}>
-                            <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+                        >
+                            <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}
+                                   bg={useColorModeValue('gray.50', 'gray.800')}>
                                 <Stack align={'center'}>
                                     <Heading fontSize={{sm: 'xl', md: '4xl'}}>Sign in to your account</Heading>
                                     <Text fontSize={{sm: 'sm', md: 'lg'}} color={'gray.600'}>
                                         to manage your reshrd items ✌️
                                     </Text>
                                 </Stack>
+
+                                {
+                                    error && <Text style={{margin: '10px auto 2px'}} color={'red.500'}>{error}</Text>
+                                }
+
                                 <Box
                                     rounded={'lg'}
                                     bg={useColorModeValue('white', 'gray.700')}
                                     boxShadow={'lg'}
                                     p={8}>
                                     <Stack spacing={4} width={{sm: '300px', md: '400px'}}>
-                                        <FormControl id="email">
-                                            <FormLabel>Email address</FormLabel>
-                                            <Input type="email" value={email} onChange={e => setEmail(e.target.value)}/>
+                                        <FormControl isInvalid={!!errors.email}>
+                                            <FormLabel htmlFor="email">Email</FormLabel>
+
+                                            <Input
+                                                id="email"
+                                                placeholder="johndoe@email.com"
+                                                {...register('email')}
+                                            />
+
+                                            <FormErrorMessage>
+                                                {errors.email && errors.email.message}
+                                            </FormErrorMessage>
                                         </FormControl>
-                                        <FormControl id="password">
-                                            <FormLabel>Password</FormLabel>
-                                            <Input type="password" value={password}
-                                                   onChange={e => setPassword(e.target.value)}/>
+
+
+                                        <FormControl isInvalid={!!errors.password}>
+                                            <FormLabel htmlFor="password">Password</FormLabel>
+                                            <InputGroup>
+                                                <Input id="password"
+                                                       type={showingPass ? 'text' : 'password'} {...register('password')} />
+
+                                                <InputRightElement h={'full'}>
+                                                    <Button
+                                                        variant={'ghost'}
+                                                        onClick={() =>
+                                                            setShowingPass((showPassword) => !showPassword)
+                                                        }>
+                                                        {showingPass ? <ViewIcon/> : <ViewOffIcon/>}
+                                                    </Button>
+                                                </InputRightElement>
+                                            </InputGroup>
+
+                                            <FormErrorMessage>
+                                                {errors.password && errors.password.message}
+                                            </FormErrorMessage>
                                         </FormControl>
 
                                         <Stack spacing={10} pt={2}>
                                             <Button
-                                                bg={'blue.400'}
-                                                color={'white'}
-                                                _hover={{
-                                                    bg: 'blue.500',
-                                                }}
-                                                disabled={!email || !password}
-                                                onClick={handleLogin}
-                                                type={'submit'}
-                                            >
-
-                                                {
-                                                    loading ? <Spinner/> : 'Sign in'
-                                                }
+                                                mt={4}
+                                                colorScheme="teal"
+                                                isLoading={isSubmitting}
+                                                type="submit">
+                                                Submit
                                             </Button>
 
                                             <Stack pt={6}>
