@@ -1,10 +1,11 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../items";
-import {sendInvitationEmail} from "../../../infrastructure/email-utils";
+import {generateCodeId} from "../../../infrastructure/generateCode";
 
 
-const toDbItemsFormat = (item: any) => {
-    const codeId = createRandomId();
+const toDbItemsFormat = async (item: any) => {
+
+    const codeId = await generateCodeId();
 
     return {
         codeId,
@@ -17,6 +18,15 @@ const toDbItemsFormat = (item: any) => {
 };
 
 
+async function getMappedItems(items: any[]) {
+    let mappedItems = [];
+    for (const item of items) {
+        const mappedItem = await toDbItemsFormat(item);
+        mappedItems.push(mappedItem);
+    }
+    return mappedItems;
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -25,7 +35,7 @@ export default async function handler(
         const customerEmail = 'test@wp.pl';
         // const customerEmail = req.body.customer.email
 
-        const customerNewProducts = req.body.line_items.map(toDbItemsFormat);
+        const customerNewProducts = await getMappedItems(req.body.line_items);
 
         const customer = await getCustomerByEmail(customerEmail);
 
@@ -34,7 +44,7 @@ export default async function handler(
             // await sendInvitationEmail(customerEmail);
         } else {
             await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
-            await sendInvitationEmail(customerEmail);
+            // TODO await sendInvitationEmail(customerEmail);
         }
 
 
@@ -43,10 +53,4 @@ export default async function handler(
         console.error(e)
         res.status(500).json({success: false})
     }
-}
-
-
-function createRandomId() {
-    return Math.floor(10000 + Math.random() * 900000).toString();
-
 }

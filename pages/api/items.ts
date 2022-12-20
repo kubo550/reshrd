@@ -1,13 +1,16 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {db} from "../../config/firebase";
-import { collection, getDocs, doc, updateDoc, addDoc} from "@firebase/firestore";
+import {addDoc, collection, doc, getDocs, updateDoc} from "@firebase/firestore";
+
+//todo move this logic to separate file
+
+// todo add much more logs
 
 export async function getCustomers() {
     const customerRef = collection(db, 'customers');
 
     const documents = await getDocs(customerRef);
-    const customers = documents.docs.map(doc => doc.data());
-    return customers;
+    return documents.docs.map(doc => doc.data());
 }
 
 export async function saveItems(userId: string, newItems: any) {
