@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {getCustomerByEmail, saveItems} from "./items";
+import {saveItems} from "../../infrastructure/firebase";
 
 
 

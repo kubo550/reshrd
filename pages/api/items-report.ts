@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {getCustomers} from "./items";
+import {getCustomers} from "../../infrastructure/firebase";
 
 export default async function handler(
     req: NextApiRequest,

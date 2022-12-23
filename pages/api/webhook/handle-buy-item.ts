@@ -1,6 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../items";
 import {generateCodeId} from "../../../infrastructure/generateCode";
+import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../../../infrastructure/firebase";
 
 
 const toDbItemsFormat = async (item: any) => {
