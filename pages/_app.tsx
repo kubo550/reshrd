@@ -4,9 +4,11 @@ import {Footer} from "../components/Footer/Footer";
 import {Header} from "../components/Header/Header";
 import {AuthContextProvider} from "../context/AuthContext";
 import {QueryClient, QueryClientProvider} from "react-query";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {ChakraProvider, Flex} from "@chakra-ui/react";
 import {extendTheme} from '@chakra-ui/react'
+import {useRouter} from "next/router";
+import Script from "next/script";
 
 const config = {
     initialColorMode: 'dark',
@@ -26,23 +28,49 @@ const config = {
 const theme = extendTheme({config})
 
 export default function App({Component, pageProps}: AppProps) {
-    const [queryClient] = useState(() => new QueryClient())
+    const [queryClient] = useState(() => new QueryClient());
 
-    return <QueryClientProvider client={queryClient}>
-        <AuthContextProvider>
-            <ChakraProvider theme={theme} cssVarsRoot="body">
-                <Flex
-                    flexDirection={'column'}
-                    justifyContent={'space-between'}
-                    flex={'1'}
-                    minH={'100vh'}
-                    margin={0}
-                >
-                    <Header/>
-                    <Component {...pageProps} />
-                    <Footer/>
-                </Flex>
-            </ChakraProvider>
-        </AuthContextProvider>
-    </QueryClientProvider>
+    const router = useRouter()
+
+    useEffect(() => {
+        import('react-facebook-pixel')
+            .then((x) => x.default)
+            .then((ReactPixel) => {
+                ReactPixel.init('9006653022692930')
+                ReactPixel.pageView()
+
+                router.events.on('routeChangeComplete', () => {
+                    ReactPixel.pageView()
+                })
+            })
+    }, [router.events])
+
+    return (<>
+            <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-C96BPLFQXN"/>
+            <Script
+                id='google-analytics'
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                    __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-C96BPLFQXN');`,
+                }}
+            />
+            <QueryClientProvider client={queryClient}>
+                <AuthContextProvider>
+                    <ChakraProvider theme={theme} cssVarsRoot="body">
+                        <Flex
+                            flexDirection={'column'}
+                            justifyContent={'space-between'}
+                            flex={'1'}
+                            minH={'100vh'}
+                            margin={0}
+                        >
+                            <Header/>
+                            <Component {...pageProps} />
+                            <Footer/>
+                        </Flex>
+                    </ChakraProvider>
+                </AuthContextProvider>
+            </QueryClientProvider>
+        </>
+    )
 }
