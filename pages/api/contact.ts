@@ -1,5 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {EmailService} from "../../infrastructure/email-service";
+import {use} from "next-api-route-middleware";
+import {validateMethod, validateUser} from "../../utils/validateUser";
 
 const CONTACT_MESSAGE_FIELDS = {
     email: "Email",
@@ -26,11 +28,10 @@ const generateEmailContent = (data: emailData) => {
 
 
 
-export default async function handler(
+export default use(validateMethod('POST'), validateUser, async (
     req: NextApiRequest,
     res: NextApiResponse
-) {
-
+) => {
     const { message, email, subject } = req.body;
     const { text, html } = generateEmailContent({ message, email, subject });
 
@@ -53,4 +54,4 @@ export default async function handler(
         console.log((e as any).message)
         res.status(500).json({ message: "Message failed to send" });
     }
-}
+});

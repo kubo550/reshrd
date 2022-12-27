@@ -1,34 +1,26 @@
-import {NextApiRequest, NextApiResponse} from "next";
+import { NextApiResponse} from "next";
 import {saveItems} from "../../infrastructure/firebase";
+import {use} from "next-api-route-middleware";
+import {NextApiRequestWithUser, validateMethod, validateUser} from "../../utils/validateUser";
 
 
 
-export default async function handler(
-    req: NextApiRequest,
+export default use(validateMethod('POST'), validateUser, async (
+    req: NextApiRequestWithUser,
     res: NextApiResponse
-) {
-    if (req.method !== 'POST') {
-        res.status(404).json({message: 'Not found'});
-        return;
-    }
-
-    if (!req.headers.authorization) {
-        res.status(401).json({});
-        return;
-    }
+) => {
 
     try {
-        const userId = req.query.user as string;
+        const email = req.headers.email;
         const newItems = req.body.products;
 
-        await saveItems(userId, newItems)
+        await saveItems(email, newItems)
 
         res.status(200).json({items: newItems});
-
     }
     catch (e) {
         console.error(e)
         return res.status(500).json({})
     }
 
-}
+});

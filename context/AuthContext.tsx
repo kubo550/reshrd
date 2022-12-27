@@ -21,6 +21,7 @@ interface AuthContextData {
     login: (email: string, password: string) => Promise<UserCredential>;
     register: (email: string, password: string) => Promise<UserCredential>;
     logout: () => Promise<void>;
+    getCurrentUserToken: () => Promise<string | undefined>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -49,6 +50,10 @@ export const AuthContextProvider: FC<AuthProviderProps> = ({children}) => {
         return auth.signOut();
     }
 
+    const getCurrentUserToken = async () => {
+        return await auth.currentUser?.getIdToken();
+    }
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -69,7 +74,7 @@ export const AuthContextProvider: FC<AuthProviderProps> = ({children}) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{currentUser, login, logout, register}}>
+        <AuthContext.Provider value={{currentUser, login, logout, register, getCurrentUserToken}}>
             {children}
         </AuthContext.Provider>
     );

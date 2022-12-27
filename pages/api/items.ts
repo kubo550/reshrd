@@ -1,36 +1,24 @@
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiResponse} from "next";
 import {getCustomerByEmail} from "../../infrastructure/firebase";
+import {use} from 'next-api-route-middleware';
+import {NextApiRequestWithUser, validateMethod, validateUser} from "../../utils/validateUser";
 
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
-    if (req.method !== 'GET') {
-        res.status(404).json({message: 'Not found'});
-        return;
-    }
-
-    if (!req.headers.authorization) {
-        res.status(401).json({});
-        return;
-    }
-
+export default use(validateMethod('GET'), validateUser, async (
+    req: NextApiRequestWithUser,
+    res: NextApiResponse,
+) => {
     try {
-        const email = req.query.email as string;
+        const email = req.headers.email;
         const customer = await getCustomerByEmail(email);
 
         if (!customer) {
             // res.status(404).json({message: 'Customer not found'});
             res.status(200).json({items: [], customerId: null});
-
             return;
-
         }
 
-
         const items = customer.items;
-
 
         res.status(200).json({items, customerId: customer.id});
 
@@ -38,5 +26,4 @@ export default async function handler(
         console.error(e)
         return res.status(500).json({})
     }
-
-}
+});

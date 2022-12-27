@@ -25,12 +25,13 @@ export async function getCustomers() {
     return documents.docs.map(doc => doc.data());
 }
 
-export async function saveItems(userId: string, newItems: any) {
-    console.log('saveItems', {userId, newItems});
+// todo refactor this
+export async function saveItems(email: string, newItems: any) {
+    console.log('saveItems', {email, newItems});
     const customerRef = collection(db, 'customers');
     const customers = await getDocs(customerRef);
 
-    const customer = customers.docs.find(doc => doc.data().id === userId);
+    const customer = customers.docs.find(doc => doc.data().email === email);
 
     if (!customer) {
         console.log('saveItems: customer not found');
@@ -87,20 +88,4 @@ export async function updateCustomer(customer: DbCustomer, customerAllProducts: 
     await updateDoc(customerDocRef, {
         items: customerAllProducts
     });
-}
-
-export async function getRedirectUrlByCodeId(codeId: string) {
-    console.log('getRedirectUrlByCodeId', {codeId});
-    const customers = await getCustomers() as DbCustomer[];
-    const customer = customers.find(customer => customer.items.find(item => item.codeId === codeId));
-    if (!customer) {
-        console.log('getRedirectUrlByCodeId - no customer found');
-        return null;
-    }
-    const item = customer.items.find(item => item.codeId === codeId);
-    if (!item) {
-        console.log('getRedirectUrlByCodeId - no item found');
-        return null;
-    }
-    return item.linkUrl;
 }

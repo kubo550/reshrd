@@ -2,16 +2,23 @@ import Head from "next/head";
 import {ProtectedRoute} from "../components/ProtectedRoute/ProtectedRoute";
 import {useQuery} from "react-query";
 import {useAuth} from "../context/AuthContext";
-import {getItems} from "../components/api";
+import {ApiClient} from "../components/api";
 import {ProductList} from "../components/ProductsList/ProductList";
 import {Container, Spinner, Text} from "@chakra-ui/react";
 
 
 export default function Index() {
-    const {currentUser} = useAuth();
+    const {getCurrentUserToken} = useAuth();
 
-    const {data, isLoading, isError} = useQuery('items', () => getItems(currentUser), {
-        enabled: !!currentUser
+    async function getItemsQuery() {
+        const token = await getCurrentUserToken() || '';
+        const apiClient = new ApiClient(token);
+        return await apiClient.getItems();
+    }
+
+    const {data, isLoading, isError} = useQuery('items',  getItemsQuery, {
+        enabled: !!getCurrentUserToken
+    //    todo disable cache
     });
 
     const haveNoItems = data && data.items.length === 0;

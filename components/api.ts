@@ -1,28 +1,64 @@
-import {UserType} from "../context/AuthContext";
 import axios from "axios";
-import {Product} from "../types/products";
 
-function getHeaders() {
-    return {
-        'Authorization': `Bearer very-secret-token`,
-    };
-}
-
-export async function getItems(user: UserType | null): Promise<any> {
-    if (!user) {
-        return {};
+export class ApiClient {
+    constructor(private readonly token: string) {
     }
-    const {email} = user;
-    const {data} = await axios.get(`/api/items?email=${email}`, {headers: getHeaders()});
-    return data;
+
+    async getItems() {
+        const {data} = await axios.get(`/api/items`, {
+            headers: this.getAuthorization()
+        });
+        return data
+    }
+
+    async saveItem() {
+        const {data} = await axios.post(`/api/save-items`, {
+            headers: this.getAuthorization()
+        });
+        return data
+    }
+
+    async sendContactForm(emailData: { message: string, email: string, subject: string }) {
+        const {data} = await axios.post(`/api/contact`, emailData, {
+            headers: this.getAuthorization()
+        });
+        return data
+    }
+
+    async getReport() {
+        const {data} = await axios.get<any>('/api/items-report', {
+            responseType: 'blob',
+            headers: this.getAuthorization()
+        });
+        return data;
+    }
+
+    getAuthorization() {
+        return {
+            'Authorization': `Bearer ${this.token}`
+        }
+    }
 }
 
-export async function saveProducts(userId: string, products: Product[]): Promise<any> {
-    const {data} = await axios.post(`/api/save-items?user=${userId}`, {products}, {headers: getHeaders()});
-    return data;
-}
 
-export async function sendContactForm(emailData: {message: string, email: string, subject: string}): Promise<any> {
-    const {data} = await axios.post(`/api/contact`, emailData, {headers: getHeaders()});
-    return data;
-}
+// export async function saveProducts(userId: string, products: Product[]): Promise<any> {
+//     const {data} = await axios.post(`/api/save-items?user=${userId}`, {products}, {
+//         headers: getHeaders()
+//     });
+//     return data;
+// }
+
+// export async function sendContactForm(emailData: { message: string, email: string, subject: string }): Promise<any> {
+//     const {data} = await axios.post(`/api/contact`, emailData, {
+//         headers: getHeaders()
+//     });
+//     return data;
+// }
+
+// export async function getReport(): Promise<any> {
+//     const {data} = await axios.get<any>('/api/items-report', {
+//         responseType: 'blob',
+//         headers: getHeaders()
+//     });
+//     return data;
+// }
