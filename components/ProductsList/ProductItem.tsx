@@ -9,55 +9,81 @@ import {
     Input,
     Link,
     Tag,
+    Stack,
     useColorModeValue,
-    useToast
+    useToast, Text
 } from "@chakra-ui/react";
-import {FC, useState} from "react";
-import _ from "lodash";
+import {FC, useEffect} from "react";
 import {useAuth} from "../../context/AuthContext";
 import {ApiClient} from "../api";
+import {useForm} from "react-hook-form";
+import * as yup from "yup";
+import {yupResolver} from "@hookform/resolvers/yup";
 
 interface ProductItemProps {
     product: Product;
 }
 
-export const ProductItem: FC<ProductItemProps> = ({product}) => {
-    const [initialProduct, setInitialProduct] = useState(product);
-    const [localProduct, setLocalProduct] = useState(product);
-    const {title, name, imageUrl, linkUrl, codeId} = localProduct;
+type ProductFormInputs = {
+    name: string;
+    redirectUrl: string;
+}
 
+const schema = yup.object().shape({
+    name: yup.string().max(50),
+    redirectUrl: yup.string().url().max(500),
+});
+
+
+export const ProductItem: FC<ProductItemProps> = ({product}) => {
+    const {title, name, imageUrl, linkUrl, codeId} = product;
     const {getCurrentUserToken} = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
 
     const toast = useToast();
 
+    const {
+        handleSubmit,
+        register,
+        setValue,
+        reset,
+        formState: {errors, isSubmitting, isDirty}
+    } = useForm<ProductFormInputs>({
+        resolver: yupResolver(schema),
+        mode: 'all'
+    })
 
-    const hasChanged = !_.isEqual(initialProduct, localProduct);
+    useEffect(() => {
+        setValue('name', name);
+        setValue('redirectUrl', linkUrl);
+    }, [name, linkUrl, setValue]);
 
-    const handleSaveItem = async () => {
-        setIsLoading(true);
+
+    const handleSaveItem = async ({redirectUrl, name}: ProductFormInputs) => {
         try {
             const token = await getCurrentUserToken() || '';
             const apiClient = new ApiClient(token);
-            const {item} = await apiClient.updateItem(localProduct);
-            setInitialProduct(item);
-            setLocalProduct(item);
+            const {item} = await apiClient.updateItem({codeId, name, linkUrl: redirectUrl});
 
             toast({
-                title: "Item updated.",
+                title: "Item updated",
                 status: "success",
                 duration: 2000,
+                position: "top",
             });
+
+            reset({
+                name: item.name,
+                redirectUrl: item.linkUrl
+            });
+
         } catch (e) {
             console.log(e);
             toast({
-                title: "Error updating item.",
+                title: "Error while updating item",
                 status: "error",
                 duration: 2000,
+                position: "top",
             });
-        }
-        finally {
-            setIsLoading(false);
         }
     };
 
@@ -116,65 +142,61 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
 
 
                 <Box marginTop="10">
-                    <form>
-                        <FormControl>
-                            <Input
-                                variant={'solid'}
-                                borderWidth={1}
-                                color={'gray.200'}
-                                _placeholder={{
-                                    color: 'gray.400',
-                                }}
-                                borderColor={useColorModeValue('gray.300', 'gray.700')}
-                                type={'text'}
-                                required
-                                placeholder={'Name the product'}
-                                aria-label={'Name the product'}
-                                value={name} onChange={(e) => setLocalProduct({...localProduct, name: e.target.value})}
-                                marginBottom={'20px'}
-                            />
-                        </FormControl>
+                    <form onSubmit={handleSubmit(handleSaveItem)}>
+                        <Stack spacing={4} width={{sm: '300px', md: '400px'}}>
+                            <FormControl>
+                                <Input
+                                    {...register('name')}
+                                    variant={'solid'}
+                                    borderWidth={1}
+                                    color={'gray.200'}
+                                    _placeholder={{
+                                        color: 'gray.400',
+                                    }}
+                                    borderColor={useColorModeValue('gray.300', 'gray.700')}
+                                    type={'text'}
+                                    required
+                                    placeholder={'My super cool product...'}
+                                    aria-label={'Name the product'}
+                                />
+                                <Text color={'red.400'}>
+                                    {errors.name && errors.name.message}
+                                </Text>
+                            </FormControl>
 
-                        <FormControl>
-                            <Input
-                                variant={'solid'}
-                                borderWidth={1}
-                                color={'gray.200'}
-                                _placeholder={{
-                                    color: 'gray.400',
-                                }}
-                                borderColor={useColorModeValue('gray.300', 'gray.700')}
-                                type={'text'}
-                                required
-                                placeholder={'Redirect link'}
-                                aria-label={'Redirect link'}
-                                value={linkUrl}
-                                onChange={(e) => setLocalProduct({...localProduct, linkUrl: e.target.value})}
-                            />
-                        </FormControl>
+                            <FormControl>
+                                <Input
+                                    {...register('redirectUrl')}
+                                    variant={'solid'}
+                                    borderWidth={1}
+                                    color={'gray.200'}
+                                    _placeholder={{
+                                        color: 'gray.400',
+                                    }}
+                                    borderColor={useColorModeValue('gray.300', 'gray.700')}
+                                    type={'text'}
+                                    required
+                                    placeholder={'e.g. https://www.google.com'}
+                                    aria-label={'Redirect link'}
+                                />
+                                <Text color={'red.400'}>
+                                    {errors.redirectUrl && errors.redirectUrl.message}
+                                </Text>
+                            </FormControl>
 
 
-                        {
-                            hasChanged && (<Button
-                                px={4}
-                                marginLeft={'1%'}
-                                fontSize={'sm'}
-                                rounded={'full'}
-                                bg={'green.400'}
-                                color={'white'}
-                                minWidth={'127px'}
-                                _hover={{
-                                    bg: 'green.500',
-                                }}
-                                marginTop={'8px'}
-                                _focus={{
-                                    bg: 'green.500',
-                                }}
-                                isLoading={isLoading}
-                                onClick={handleSaveItem}>
-                                Save
-                            </Button>)
-                        }
+                            {
+                                isDirty && (
+                                    <Button type={'submit'} px={4} marginLeft={'1%'} fontSize={'sm'} rounded={'full'}
+                                            bg={'green.400'} color={'white'}
+                                            minWidth={'127px'} _hover={{bg: 'green.500',}} marginTop={'8px'}
+                                            _focus={{bg: 'green.500',}}
+                                            isLoading={isSubmitting}
+                                    >
+                                        Save
+                                    </Button>)
+                            }
+                        </Stack>
 
                     </form>
                 </Box>

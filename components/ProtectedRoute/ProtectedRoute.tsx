@@ -5,23 +5,20 @@ import {useRouter} from "next/navigation";
 
 interface ProtectedRouteProps {
     children: ReactNode;
-    type: 'onlyGuest' | 'onlyAuth';
 }
 
-export const ProtectedRoute: FC<ProtectedRouteProps> = ({children, type}) => {
+export const ProtectedRoute: FC<ProtectedRouteProps> = ({children}) => {
 
     const {currentUser} = useAuth();
 
     const router = useRouter();
 
     useEffect(() => {
-        if (type === 'onlyAuth' && !currentUser) {
+        if (!currentUser) {
             router.push('/login');
         }
-        if (type === 'onlyGuest' && currentUser) {
-            router.push('/');
-        }
-    }, [currentUser, type, router]);
+
+    }, [currentUser, router]);
 
     return (
         <>

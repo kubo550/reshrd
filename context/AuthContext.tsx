@@ -75,7 +75,6 @@ export const AuthContextProvider: FC<AuthProviderProps> = ({children}) => {
 
     return (
         <AuthContext.Provider value={{currentUser, login, logout, register, getCurrentUserToken}}>
-
             {children}
         </AuthContext.Provider>
     );

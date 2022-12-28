@@ -12,7 +12,7 @@ export class ApiClient {
         return data
     }
 
-    async updateItem(item: Product) {
+    async updateItem(item: Pick<Product, 'name' | 'codeId' | 'linkUrl'>) {
         const {data} = await axios.post(`/api/update-item`, {item}, {
             headers: this.getAuthorization()
         });

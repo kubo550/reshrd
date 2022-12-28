@@ -55,12 +55,18 @@ export default function Contact() {
             setTouched(initialTouched);
             setState(initState);
             toast({
-                title: "Message sent.",
+                title: "Message sent",
                 status: "success",
                 duration: 2000,
                 position: "top",
             });
         } catch (error) {
+            toast({
+                title: "Error sending message",
+                status: "error",
+                duration: 2000,
+                position: "top",
+            });
             setState((prev) => ({
                 ...prev,
                 isLoading: false,
