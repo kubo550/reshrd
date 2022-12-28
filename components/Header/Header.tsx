@@ -11,6 +11,7 @@ import {
     PopoverTrigger,
     useColorModeValue,
     useDisclosure,
+
 } from '@chakra-ui/react';
 import {
     HamburgerIcon,
@@ -81,19 +82,21 @@ export function Header() {
                     flex={{base: 1, md: 'auto'}}
                     ml={{base: -2}}
                     display={{base: 'flex', md: 'none'}}>
-                    <IconButton onClick={onToggle}
-                                icon={isOpen ? <CloseIcon w={3} h={3}/> : <HamburgerIcon w={5} h={5}/>}
-                                variant={'ghost'}
-                                aria-label={'Toggle Navigation'}
-                    />
+                        <IconButton onClick={onToggle}
+                                    icon={isOpen ? <CloseIcon w={3} h={3}/> : <HamburgerIcon w={5} h={5}/>}
+                                    variant={'ghost'}
+                                    aria-label={'Toggle Navigation'}
+                        />
                 </Flex>
                 <Flex flex={{base: 1}} justify={{base: 'center', md: 'start'}}>
                     <NextLink href={currentUser ? '/' : '/login'}>
-                        <Image src={'/logo_white_200x.png'} alt="logo" width={150} height={21}/>
+                            <div>
+                                <Image src={'/logo_white_200x.png'} alt="logo" width={150} height={21}/>
+                            </div>
                     </NextLink>
 
                     <Flex display={{base: 'none', md: 'flex'}} mx={'auto'}>
-                        <DesktopNav />
+                        <DesktopNav/>
                     </Flex>
                 </Flex>
 
@@ -161,9 +164,9 @@ const DesktopNav = () => {
                         <Popover trigger={'hover'} placement={'bottom-start'}>
                             <PopoverTrigger>
                                 {isExternal ? (
-                                    <a href={navItem.href} target={'_blank'} rel={'noreferrer'}>
+                                    <Link href={navItem.href} target={'_blank'} rel={'noreferrer'}>
                                         {navItem.label}
-                                    </a>
+                                    </Link>
                                 ) : (
                                     <Link
                                         p={2}
@@ -210,18 +213,14 @@ const MobileNavItem: FC<MobileNavItemProps> = ({label, href, hideMenu}) => {
         <Stack spacing={4}>
             {
                 isExternal ? (
-                    <a href={href} target={'_blank'} rel={'noreferrer'}>
-                        <Text fontWeight={600} color={color}>
-                            {label}
-                        </Text>
-                    </a>
+                    <Link href={href} target={'_blank'} rel={'noreferrer'} fontWeight={600} color={color}>
+                        {label}
+                    </Link>
                 ) : (
                     <NextLink href={href} onClick={hideMenu}>
-                        <Flex py={2} as={Link} justify={'space-between'} align={'center'}
-                              _hover={{textDecoration: 'none',}}>
-                            <Text fontWeight={600} color={color}>
-                                {label}
-                            </Text>
+                        <Flex py={2} justify={'space-between'} align={'center'}
+                              _hover={{textDecoration: 'none',}} fontWeight={600} color={color}>
+                            {label}
                         </Flex>
                     </NextLink>
                 )

@@ -51,7 +51,7 @@ export const AuthContextProvider: FC<AuthProviderProps> = ({children}) => {
     }
 
     const getCurrentUserToken = async () => {
-        return await auth.currentUser?.getIdToken();
+        return auth.currentUser?.getIdToken();
     }
 
 
