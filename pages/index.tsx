@@ -17,8 +17,8 @@ export default function Index() {
     }
 
     const {data, isLoading, isError} = useQuery('items',  getItemsQuery, {
-        enabled: !!getCurrentUserToken
-    //    todo disable cache
+        enabled: !!getCurrentUserToken,
+        refetchOnWindowFocus: false,
     });
 
     const haveNoItems = data && data.items.length === 0;
