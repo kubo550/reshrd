@@ -24,7 +24,7 @@ export default function Index() {
     const haveNoItems = data && data.items.length === 0;
 
     return (
-        <ProtectedRoute type={'onlyAuth'}>
+        <ProtectedRoute>
             <div>
                 <Head>
                     <title>Qr id | Your items</title>
@@ -38,7 +38,7 @@ export default function Index() {
 
                     {isError && <p>Error</p>}
 
-                    {data && <ProductList products={data.items} customerId={data.customerId}/>}
+                    {data && <ProductList products={data.items} />}
 
                     {
                         haveNoItems && <Text>You don&lsquo;t have any items yet</Text>
