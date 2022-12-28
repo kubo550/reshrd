@@ -1,4 +1,5 @@
 import axios from "axios";
+import {Product} from "../types/products";
 
 export class ApiClient {
     constructor(private readonly token: string) {
@@ -11,8 +12,8 @@ export class ApiClient {
         return data
     }
 
-    async saveItem() {
-        const {data} = await axios.post(`/api/save-items`, {
+    async updateItem(item: Product) {
+        const {data} = await axios.post(`/api/update-item`, {item}, {
             headers: this.getAuthorization()
         });
         return data
@@ -40,25 +41,3 @@ export class ApiClient {
     }
 }
 
-
-// export async function saveProducts(userId: string, products: Product[]): Promise<any> {
-//     const {data} = await axios.post(`/api/save-items?user=${userId}`, {products}, {
-//         headers: getHeaders()
-//     });
-//     return data;
-// }
-
-// export async function sendContactForm(emailData: { message: string, email: string, subject: string }): Promise<any> {
-//     const {data} = await axios.post(`/api/contact`, emailData, {
-//         headers: getHeaders()
-//     });
-//     return data;
-// }
-
-// export async function getReport(): Promise<any> {
-//     const {data} = await axios.get<any>('/api/items-report', {
-//         responseType: 'blob',
-//         headers: getHeaders()
-//     });
-//     return data;
-// }

@@ -25,24 +25,39 @@ export async function getCustomers() {
     return documents.docs.map(doc => doc.data());
 }
 
-// todo refactor this
-export async function saveItems(email: string, newItems: any) {
-    console.log('saveItems', {email, newItems});
+
+export async function updateItem(email: string, codeId: string, newName: string, newLinkUrl: string) {
+    console.log('updateItem', {email, codeId, newName, newLinkUrl});
+
     const customerRef = collection(db, 'customers');
     const customers = await getDocs(customerRef);
 
     const customer = customers.docs.find(doc => doc.data().email === email);
 
     if (!customer) {
-        console.log('saveItems: customer not found');
+        console.log('updateItem: customer not found');
         return
     }
 
     const customerDoc = doc(db, 'customers', customer.id);
+    const customerData = customer.data();
+    const items = customerData.items;
+    const item = items.find((item: any) => item.codeId === codeId);
+
+    if (!item) {
+        console.log('updateItem: item not found');
+        return
+    }
+    item.name = newName;
+    item.linkUrl = newLinkUrl;
+
+    console.log(item)
+
     await updateDoc(customerDoc, {
-        items: newItems
+        items
     });
 }
+
 
 export async function getCustomerByEmail(email: string | null) {
     console.log('getCustomerByEmail', {email});
@@ -53,7 +68,6 @@ export async function getCustomerByEmail(email: string | null) {
     const customers = await getCustomers();
     return customers.find(customer => customer.email === email);
 }
-
 
 
 export async function createNewCustomer(customerEmail: string, customerNewProducts: DbItem[]) {
