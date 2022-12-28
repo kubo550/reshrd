@@ -26,7 +26,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({children, type}) => {
     return (
         <>
             {
-                children
+               currentUser ? children : null
             }
         </>
     );

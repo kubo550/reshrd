@@ -12,17 +12,15 @@ import {
 } from "@chakra-ui/react";
 import {type ChangeEvent, useState} from "react";
 import {useAuth} from "../context/AuthContext";
-import {sendContactForm} from "../components/api";
+import {ApiClient} from "../components/api";
 
 
 const initialTouched = {message: false, email: false, subject: false};
 
 
 export default function Contact() {
-    const {currentUser} = useAuth();
-
+    const {currentUser, getCurrentUserToken} = useAuth();
     const initValues = {email: currentUser?.email || "", subject: "", message: ""};
-
     const initState = {isLoading: false, error: "", values: initValues};
 
 
@@ -50,7 +48,10 @@ export default function Contact() {
             isLoading: true,
         }));
         try {
-            await sendContactForm(values);
+            const token = await getCurrentUserToken() || '';
+            const apiClient = new ApiClient(token);
+            await apiClient.sendContactForm(values);
+
             setTouched(initialTouched);
             setState(initState);
             toast({
