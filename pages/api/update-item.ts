@@ -23,8 +23,8 @@ export default use(validateMethod('POST'), validateUser, async (
         const item = req.body.item;
         console.log('update item', {email, item});
 
-        const newName = item?.name;
-        const newLinkUrl = item?.linkUrl
+        const newName = item?.name?.trim();
+        const newLinkUrl = item?.linkUrl?.trim();
 
         if (!isValidName(newName) || !isValidLinkUrl(newLinkUrl)) {
             console.log('update item: invalid name or linkUrl');
