@@ -2,8 +2,9 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import {generateCodeId} from "../../../infrastructure/generateCode";
 import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../../../infrastructure/firebase";
 import {ShopifyItem} from "../../../types/products";
-import {sendEmailToOldCustomer, sendInvitationEmail} from "../../../infrastructure/email-utils";
 
+
+const getImageUrl = (sku: string) => `https://cdn.shopify.com/s/files/1/0671/8187/1393/files/${sku.slice(0, -1)}.jpg`;
 
 const toDbItemsFormat = async (item: ShopifyItem) => {
 
@@ -13,7 +14,7 @@ const toDbItemsFormat = async (item: ShopifyItem) => {
         codeId,
         title: item.name,
         productId: item.product_id,
-        imageUrl: 'https://cdn.shopify.com/s/files/1/0671/8187/1393/products/1-1.jpg?v=1669923158',
+        imageUrl: getImageUrl(item.sku),
         linkUrl: 'https://reshrd.com/',
         name: '',
         sku: item.sku
@@ -21,14 +22,14 @@ const toDbItemsFormat = async (item: ShopifyItem) => {
 };
 
 
-async function getMappedItems(items: any[]) {
+async function getMappedItems(items: ShopifyItem[], orderNumber: string) {
     if (!items) {
         return [];
     }
     const mappedItems = [];
     for (const item of items) {
         const mappedItem = await toDbItemsFormat(item);
-        mappedItems.push(mappedItem);
+        mappedItems.push({...mappedItem, orderId: orderNumber});
     }
     return mappedItems;
 }
@@ -38,23 +39,22 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        const customerEmail = 'kubo550@wp.pl';
+        const customerEmail = 'test@wp.pl';
         // const customerEmail = req.body.customer.email
 
-        const customerNewProducts = await getMappedItems(req.body.line_items);
-        console.log(req.body.line_items);
+        const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
 
-        console.log('customerNewProducts', customerNewProducts);
+        // console.log('customerNewProducts', customerNewProducts);
         const customer = await getCustomerByEmail(customerEmail);
 
         if (!customer) {
             console.log('customer not found, creating new one');
             await createNewCustomer(customerEmail, customerNewProducts);
-            await sendInvitationEmail(customerEmail);
+            // await sendInvitationEmail(customerEmail);
         } else {
             console.log('customer found, updating');
             await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
-            await sendEmailToOldCustomer(customerEmail);
+            // await sendEmailToOldCustomer(customerEmail);
         }
 
 
@@ -64,3 +64,4 @@ export default async function handler(
         res.status(500).json({success: false})
     }
 }
+
