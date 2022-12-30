@@ -13,6 +13,7 @@ import {
 import {type ChangeEvent, useState} from "react";
 import {useAuth} from "../context/AuthContext";
 import {ApiClient} from "../components/api";
+import Head from "next/head";
 
 
 const initialTouched = {message: false, email: false, subject: false};
@@ -75,75 +76,80 @@ export default function Contact() {
         }
     };
 
-    return (
-        <Container maxW="450px" display={'flex'} justifyContent={'center'} alignItems={'center'}
-                   flexDirection={'column'}>
-            <Heading>Contact Us</Heading>
-            {error && (
-                <Text color="red.300" my={4} fontSize="xl">
-                    {error}
-                </Text>
-            )}
+    return (<>
+            <Head>
+                <title>Contact us - Updateable QR Clothing Control Panel | RESHRD</title>
+            </Head>
+
+            <Container maxW="450px" display={'flex'} justifyContent={'center'} alignItems={'center'}
+                       flexDirection={'column'}>
+                <Heading>Contact Us</Heading>
+                {error && (
+                    <Text color="red.300" my={4} fontSize="xl">
+                        {error}
+                    </Text>
+                )}
 
 
-            <FormControl isRequired isInvalid={touched.email && !values.email} mb={5}>
-                <FormLabel>Email</FormLabel>
-                <Input
-                    type="email"
-                    name="email"
-                    errorBorderColor="red.300"
-                    value={values.email}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                <FormErrorMessage>Required</FormErrorMessage>
-            </FormControl>
+                <FormControl isRequired isInvalid={touched.email && !values.email} mb={5}>
+                    <FormLabel>Email</FormLabel>
+                    <Input
+                        type="email"
+                        name="email"
+                        errorBorderColor="red.300"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    <FormErrorMessage>Required</FormErrorMessage>
+                </FormControl>
 
-            <FormControl
-                mb={5}
-                isRequired
-                isInvalid={touched.subject && !values.subject}
-            >
-                <FormLabel>Subject</FormLabel>
-                <Input
-                    type="text"
-                    name="subject"
-                    errorBorderColor="red.300"
-                    value={values.subject}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                <FormErrorMessage>Required</FormErrorMessage>
-            </FormControl>
+                <FormControl
+                    mb={5}
+                    isRequired
+                    isInvalid={touched.subject && !values.subject}
+                >
+                    <FormLabel>Subject</FormLabel>
+                    <Input
+                        type="text"
+                        name="subject"
+                        errorBorderColor="red.300"
+                        value={values.subject}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    <FormErrorMessage>Required</FormErrorMessage>
+                </FormControl>
 
-            <FormControl
-                isRequired
-                isInvalid={touched.message && !values.message}
-                mb={5}
-            >
-                <FormLabel>Message</FormLabel>
-                <Textarea
-                    name="message"
-                    rows={4}
-                    errorBorderColor="red.300"
-                    value={values.message}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                <FormErrorMessage>Required</FormErrorMessage>
-            </FormControl>
+                <FormControl
+                    isRequired
+                    isInvalid={touched.message && !values.message}
+                    mb={5}
+                >
+                    <FormLabel>Message</FormLabel>
+                    <Textarea
+                        name="message"
+                        rows={4}
+                        errorBorderColor="red.300"
+                        value={values.message}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    <FormErrorMessage>Required</FormErrorMessage>
+                </FormControl>
 
-            <Button
-                variant="outline"
-                colorScheme="blue"
-                isLoading={isLoading}
-                disabled={
-                    !values.email || !values.subject || !values.message
-                }
-                onClick={onSubmit}
-            >
-                Submit
-            </Button>
-        </Container>
+                <Button
+                    variant="outline"
+                    colorScheme="blue"
+                    isLoading={isLoading}
+                    disabled={
+                        !values.email || !values.subject || !values.message
+                    }
+                    onClick={onSubmit}
+                >
+                    Submit
+                </Button>
+            </Container>
+        </>
     );
 }

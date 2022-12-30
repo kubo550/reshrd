@@ -9,6 +9,7 @@ import {ChakraProvider, Flex} from "@chakra-ui/react";
 import {extendTheme} from '@chakra-ui/react'
 import {useRouter} from "next/router";
 import Script from "next/script";
+import Head from "next/head";
 
 const config = {
     initialColorMode: 'dark',
@@ -46,6 +47,11 @@ export default function App({Component, pageProps}: AppProps) {
     }, [router.events])
 
     return (<>
+            <Head>
+                <title>Updateable QR Clothing Control Panel | RESHRD</title>
+                <meta name="description" content="Changeable QR code clothing management platform | Update your clothes any time you want | Explore limitless possibilities of the RESHRD streetwear and casualwear collections."/>
+                <link rel="icon" href="/favicon.ico"/>
+            </Head>
             <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-C96BPLFQXN"/>
             <Script
                 id='google-analytics'

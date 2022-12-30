@@ -1,9 +1,11 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {generateCodeId} from "../../../infrastructure/generateCode";
 import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../../../infrastructure/firebase";
+import {ShopifyItem} from "../../../types/products";
+import {sendEmailToOldCustomer, sendInvitationEmail} from "../../../infrastructure/email-utils";
 
 
-const toDbItemsFormat = async (item: any) => {
+const toDbItemsFormat = async (item: ShopifyItem) => {
 
     const codeId = await generateCodeId();
 
@@ -12,14 +14,18 @@ const toDbItemsFormat = async (item: any) => {
         title: item.name,
         productId: item.product_id,
         imageUrl: 'https://cdn.shopify.com/s/files/1/0671/8187/1393/products/1-1.jpg?v=1669923158',
-        linkUrl: '',
+        linkUrl: 'https://reshrd.com/',
         name: '',
+        sku: item.sku
     }
 };
 
 
 async function getMappedItems(items: any[]) {
-    let mappedItems = [];
+    if (!items) {
+        return [];
+    }
+    const mappedItems = [];
     for (const item of items) {
         const mappedItem = await toDbItemsFormat(item);
         mappedItems.push(mappedItem);
@@ -32,19 +38,23 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        const customerEmail = 'test@wp.pl';
+        const customerEmail = 'kubo550@wp.pl';
         // const customerEmail = req.body.customer.email
 
         const customerNewProducts = await getMappedItems(req.body.line_items);
+        console.log(req.body.line_items);
 
+        console.log('customerNewProducts', customerNewProducts);
         const customer = await getCustomerByEmail(customerEmail);
 
         if (!customer) {
+            console.log('customer not found, creating new one');
             await createNewCustomer(customerEmail, customerNewProducts);
-            // await sendInvitationEmail(customerEmail);
+            await sendInvitationEmail(customerEmail);
         } else {
+            console.log('customer found, updating');
             await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
-            // TODO await sendInvitationEmail(customerEmail);
+            await sendEmailToOldCustomer(customerEmail);
         }
 
 

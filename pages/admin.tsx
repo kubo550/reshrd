@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import {useCallback, useState} from "react";
 import styles from '../styles/Home.module.css'
 import {
@@ -11,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import {ApiClient} from "../components/api";
 import {useAuth} from "../context/AuthContext";
-import {use} from "next-api-route-middleware";
+import Head from "next/head";
 
 function download(data: any, filename: string, type: string) {
     const url = window.URL.createObjectURL(new Blob([data]));
@@ -35,15 +34,15 @@ export default function Admin() {
 
         download(reportData, 'report', 'json');
         setIsReportLoading(false);
-    }, []);
+    }, [getCurrentUserToken]);
 
 
     return (
         <div className={styles.container}>
-            <Head>
-                <title>Admin Panel</title>
-            </Head>
 
+            <Head>
+                <title>Admin - Updateable QR Clothing Control Panel | RESHRD</title>
+            </Head>
 
             <Container maxW={'3xl'}>
                 <Stack

@@ -7,7 +7,8 @@ type DbItem = {
     imageUrl: string,
     linkUrl: string,
     name: string,
-    title: string
+    title: string,
+    sku: string
 };
 
 type DbCustomer = {

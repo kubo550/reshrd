@@ -98,7 +98,10 @@ lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quibusdam.
 </body>
 </html>
    `
+}
 
+function generateHTMLForOldCustomer(email: string) {
+    return ``
 }
 
 const emailService = new EmailService(
@@ -118,4 +121,18 @@ export const sendInvitationEmail = async (email: string) => {
     await emailService.send(emailConfig);
 
 
+}
+
+
+
+export const sendEmailToOldCustomer = async (email: string) => {
+
+        const emailConfig = {
+            from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
+            to: email,
+            subject: 'Welcome back to Reshrd',
+            html: generateHTMLForOldCustomer(email)
+        };
+
+        await emailService.send(emailConfig);
 }
