@@ -24,9 +24,10 @@ export const Footer = () => {
                     spacing={4}
                     justify={{base: 'center', md: 'space-between'}}
                     align={{base: 'center', md: 'center'}}>
-                    <Text>Copyright © 2022 RE:SHRD</Text>
-                    <Text display={{default: 'none', md: 'block'}} >
-                        Powered by{' '} <a href="https://github.com/kubo550"
+                    <Text>© 2022 RESHRD</Text>
+
+                    <Text display={{default: 'none', md: 'block'}}>
+                        Powered by{' '} <a href="https://www.linkedin.com/in/jakub-kurdziel-449714205/"
                                            target="_blank"
                                            rel="noopener noreferrer">Jakub Kurdziel</a>
                     </Text>

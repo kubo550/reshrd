@@ -83,7 +83,7 @@ export default function Contact() {
 
             <Container maxW="450px" display={'flex'} justifyContent={'center'} alignItems={'center'}
                        flexDirection={'column'}>
-                <Heading>Contact Us</Heading>
+                <Heading as={'h1'}>Contact Us</Heading>
                 {error && (
                     <Text color="red.300" my={4} fontSize="xl">
                         {error}
@@ -92,7 +92,7 @@ export default function Contact() {
 
 
                 <FormControl isRequired isInvalid={touched.email && !values.email} mb={5}>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Your Email</FormLabel>
                     <Input
                         type="email"
                         name="email"
@@ -100,6 +100,7 @@ export default function Contact() {
                         value={values.email}
                         onChange={handleChange}
                         onBlur={onBlur}
+                        placeholder={'jane@doe.com'}
                     />
                     <FormErrorMessage>Required</FormErrorMessage>
                 </FormControl>
@@ -117,6 +118,8 @@ export default function Contact() {
                         value={values.subject}
                         onChange={handleChange}
                         onBlur={onBlur}
+                        placeholder={'e.g. I can’t access my email account'}
+
                     />
                     <FormErrorMessage>Required</FormErrorMessage>
                 </FormControl>
@@ -134,6 +137,7 @@ export default function Contact() {
                         value={values.message}
                         onChange={handleChange}
                         onBlur={onBlur}
+                        placeholder={'Please let us know how we could help you in as much detail as possible.'}
                     />
                     <FormErrorMessage>Required</FormErrorMessage>
                 </FormControl>

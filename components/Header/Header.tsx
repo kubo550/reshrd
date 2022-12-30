@@ -32,7 +32,7 @@ const navItems = [
     },
     {
         label: 'How does it work',
-        href: '/about',
+        href: '/howitworks',
         protected: false,
     },
     {
@@ -41,8 +41,8 @@ const navItems = [
         protected: false,
 
     }, {
-        label: 'SHOP',
-        href: 'https://reshrd.com/',
+        label: 'Shop',
+        href: 'https://reshrd.com/collections/all',
         protected: false,
 
     },

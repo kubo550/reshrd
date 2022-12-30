@@ -176,13 +176,13 @@ export default function Register({reqEmail}: { reqEmail: string }) {
                                             colorScheme="teal"
                                             isLoading={isSubmitting}
                                             type="submit">
-                                            Submit
+                                            Sign up
                                         </Button>
                                     </Stack>
 
                                     <Stack pt={6}>
                                         <Text align={'center'}>
-                                            Already an user? <Link as={NextLink} href={'/login'}
+                                            Already a user? <Link as={NextLink} href={'/login'}
                                                                    color={'blue.400'}>Login</Link>
                                         </Text>
                                     </Stack>

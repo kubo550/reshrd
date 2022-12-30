@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
-export default function About() {
+export default function Howitworks() {
     return (
         <div className={styles.container}>
             <Head>

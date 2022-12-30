@@ -22,8 +22,6 @@ export default function Index() {
         refetchOnWindowFocus: false,
     });
 
-    const haveNoItems = data && data.items.length === 0;
-
     return (
         <ProtectedRoute>
             <Head>
@@ -39,7 +37,7 @@ export default function Index() {
                     {data && <ProductList products={data.items} />}
 
                     {
-                        haveNoItems && <Text>You don&lsquo;t have any items yet</Text>
+                        data && data.items.length === 0 && <Text>You don&lsquo;t have any items yet</Text>
                     }
 
                 </Container>

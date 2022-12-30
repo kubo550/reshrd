@@ -140,7 +140,7 @@ export default function Login() {
                                             colorScheme="teal"
                                             isLoading={isSubmitting}
                                             type="submit">
-                                            Submit
+                                            Sign in
                                         </Button>
 
                                         <Stack pt={6}>
