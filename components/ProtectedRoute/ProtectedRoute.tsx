@@ -5,15 +5,19 @@ import {useRouter} from "next/navigation";
 
 interface ProtectedRouteProps {
     children: ReactNode;
+    token?: string;
 }
 
-export const ProtectedRoute: FC<ProtectedRouteProps> = ({children}) => {
+export const ProtectedRoute: FC<ProtectedRouteProps> = ({children, token}) => {
 
     const {currentUser} = useAuth();
 
     const router = useRouter();
 
     useEffect(() => {
+        if (token) {
+            return
+        }
         if (!currentUser) {
             router.push('/login');
         }

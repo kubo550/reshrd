@@ -6,13 +6,13 @@ import {
     UserCredential
 } from "@firebase/auth";
 import {auth} from "../config/firebase";
+import nookies from "nookies";
 
 
 export type UserType = {
     uid: string,
     email: string | null,
     displayName: string | null,
-    token: string | null
 };
 
 
@@ -62,10 +62,18 @@ export const AuthContextProvider: FC<AuthProviderProps> = ({children}) => {
                     uid: user.uid,
                     email: user.email,
                     displayName: user.displayName,
-                    token: user.refreshToken
                 });
+
+                user.getIdToken().then((token) => {
+                    nookies.set(undefined, 'token', token, {
+                        path: '/',
+                        maxAge: 30 * 24 * 60 * 60
+                    });
+                });
+
             } else {
                 setCurrentUser(null);
+                nookies.destroy(undefined, 'token');
             }
 
         });

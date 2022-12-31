@@ -1,5 +1,6 @@
 import axios from "axios";
 import {Product} from "../types/products";
+import nookies from "nookies";
 
 export class ApiClient {
     constructor(private readonly token: string) {
@@ -35,8 +36,9 @@ export class ApiClient {
     }
 
     getAuthorization() {
+        const cookies = nookies.get(null, 'token');
         return {
-            'Authorization': `Bearer ${this.token}`
+            'Authorization': `Bearer ${cookies.token}`
         }
     }
 }

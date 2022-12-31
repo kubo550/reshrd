@@ -6,10 +6,13 @@ import {ApiClient} from "../components/api";
 import {ProductList} from "../components/ProductsList/ProductList";
 import {Container, Spinner, Text} from "@chakra-ui/react";
 import Head from "next/head";
+import {GetServerSideProps} from "next";
+import nookies from "nookies";
 
 
-export default function Index() {
+export default function Index(props: any) {
     const {getCurrentUserToken} = useAuth();
+
 
     async function getItemsQuery() {
         const token = await getCurrentUserToken() || '';
@@ -23,7 +26,7 @@ export default function Index() {
     });
 
     return (
-        <ProtectedRoute>
+        <ProtectedRoute token={props?.cookies.token}>
             <Head>
                 <title>Your items - Updateable QR Clothing Control Panel | RESHRD</title>
             </Head>
@@ -44,4 +47,16 @@ export default function Index() {
             </div>
         </ProtectedRoute>
     );
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const cookies = nookies.get(ctx)
+
+    console.log('cookies', cookies);
+    return {
+        props: {
+            server: true,
+            cookies,
+        },
+    }
 }
