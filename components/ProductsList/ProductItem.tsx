@@ -13,6 +13,7 @@ import {
     useColorModeValue,
     useToast, Text
 } from "@chakra-ui/react";
+import {ExternalLinkIcon} from "@chakra-ui/icons";
 import {FC, useEffect} from "react";
 import {useAuth} from "../../context/AuthContext";
 import {ApiClient} from "../api";
@@ -128,20 +129,32 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
             <Box display="flex" flex="1" flexDirection="column" justifyContent="center"
                  marginTop={{base: '3', sm: '0'}}>
 
-                <HStack spacing={2}>
-                    <Tag size={'md'} variant="solid" colorScheme="orange">
-                        #{codeId}
-                    </Tag>
-                </HStack>
-
-                <Heading marginTop="1">
+                <Heading marginTop={{base: '1', sm: '5'}}
+                         marginBottom={{base: '1', sm: '5'}}>
                     <Link textDecoration="none" _hover={{textDecoration: 'none', cursor: 'text'}}>
                         {title}
                     </Link>
                 </Heading>
 
+                <HStack spacing={2} marginY={{
+                    base: '5',
+                    sm: '3',
+                    md: '4'
+                }}>
+                    <Tag size={'md'} variant="solid" colorScheme="orange" marginRight={'10px'}>
+                        #{codeId}
+                    </Tag>
 
-                <Box marginTop="10">
+                    <Link href={`https://qr.reshrd.com/${codeId}`} title={'Check it out'}>
+                        <ExternalLinkIcon marginBottom={'6px'}/>
+                    </Link>
+                </HStack>
+
+                <Box marginY={{
+                    base: '0',
+                    sm: '3',
+                    md: '4'
+                }}>
                     <form onSubmit={handleSubmit(handleSaveItem)}>
                         <Stack spacing={4} width={{sm: '300px', md: '400px'}}>
                             <FormControl>
@@ -196,6 +209,10 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
                                         Save
                                     </Button>)
                             }
+
+                            <Box display={{base: 'block', sm: 'none'}} >
+                                <hr style={{margin: '15px 0'}}/>
+                            </Box>
                         </Stack>
 
                     </form>
