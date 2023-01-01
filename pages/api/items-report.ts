@@ -2,25 +2,49 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {getCustomers} from "../../infrastructure/firebase";
 import {use} from "next-api-route-middleware";
 import {validateMethod, validateUser} from "../../utils/validateUser";
+import {Product} from "../../types/products";
 
-export default use(validateMethod('GET'), validateUser, async(
+type ReportData = {
+    'Shopify Order ID': string,
+    'Item Name': string,
+    'Item SKU': string,
+    'QR Code': string,
+}
+
+function toCSV(data: ReportData[]): string {
+    const header = Object.keys(data[0]).join(',');
+    const rows = data.map(row => Object.values(row).join(','));
+    return [header, ...rows].join('\n');
+}
+
+export default use(validateMethod('GET'), validateUser,  async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
+    console.log('Generating report...');
 
     try {
         const customersData = await getCustomers();
-        const urlPerCodeId = customersData.reduce((acc, customer) => {
-            customer.items.forEach((item: any) => {
-                acc[item.codeId] = item.linkUrl;
-            });
-            return acc;
-        }, {});
+        const data = [] as ReportData[];
 
+        console.log('Generating report - Processing customers data...');
 
-        res.setHeader('Content-disposition', 'attachment; filename=customers.json');
-        res.setHeader('Content-type', 'application/json');
-        res.write(JSON.stringify(urlPerCodeId));
+        customersData.forEach(customer => {
+            customer.items.forEach((item: Product) => {
+                data.push({
+                    'Shopify Order ID': item?.orderId || '',
+                    'Item Name': item?.title || '',
+                    'Item SKU': item?.sku || '',
+                    'QR Code': item?.codeId || '',
+                })
+            })
+        });
+
+        console.log('Generating report - Processing customers data... Done');
+
+        res.setHeader('Content-disposition', 'attachment; filename=customers.csv');
+        res.setHeader('Content-type', 'text/csv');
+        res.status(200).send(toCSV(data));
         res.end();
 
     } catch (e) {

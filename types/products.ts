@@ -1,12 +1,14 @@
 export type Product = {
-    "variantId": string,
-    "codeId": string,
-    "linkUrl": string,
-    "productId": string,
-    "name": string,
-    "title": string,
-    "imageUrl": string
+    codeId: string,
+    imageUrl: string
+    linkUrl: string,
+    name: string,
+    orderId: string
+    productId: string,
+    sku: string
+    title: string,
 }
+
 
 export type ShopifyItem = {
     id: number,

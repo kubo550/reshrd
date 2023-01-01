@@ -52,7 +52,6 @@ export default function Index(props: any) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const cookies = nookies.get(ctx)
 
-    console.log('cookies', cookies);
     return {
         props: {
             server: true,

@@ -32,7 +32,7 @@ export default function Admin() {
         const apiClient = new ApiClient(token);
         const reportData = await apiClient.getReport();
 
-        download(reportData, 'report', 'json');
+        download(reportData, 'report', 'csv');
         setIsReportLoading(false);
     }, [getCurrentUserToken]);
 
