@@ -11,6 +11,9 @@ import {
 import {ApiClient} from "../components/api";
 import {useAuth} from "../context/AuthContext";
 import Head from "next/head";
+import {GetServerSideProps} from "next";
+import nookies from "nookies";
+import {getTokenInfo, isAdmin} from "../utils/validateUser";
 
 function download(data: any, filename: string, type: string) {
     const url = window.URL.createObjectURL(new Blob([data]));
@@ -48,13 +51,13 @@ export default function Admin() {
                 <Stack
                     as={Box}
                     textAlign={'center'}
-                    spacing={{ base: 8, md: 14 }}
-                    py={{ base: 20, md: 36 }}>
+                    spacing={{base: 8, md: 14}}
+                    py={{base: 20, md: 36}}>
                     <Heading
                         fontWeight={600}
-                        fontSize={{ base: '2xl', sm: '4xl', md: '6xl' }}
+                        fontSize={{base: '2xl', sm: '4xl', md: '6xl'}}
                         lineHeight={'110%'}>
-                        Admin <br />
+                        Admin <br/>
                         <Text as={'span'} color={'green.400'}>
                             Panel
                         </Text>
@@ -88,4 +91,31 @@ export default function Admin() {
             </Container>
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const cookies = nookies.get(ctx)
+
+    console.log('HELLLLLLOooooooooooo')
+    const token = cookies.token;
+
+    const decodedToken = await getTokenInfo(token);
+
+    if (!isAdmin(decodedToken?.email)) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: true,
+            },
+            props: {
+
+            }
+        }
+    }
+
+    return {
+        props: {
+            server: true,
+        },
+    }
 }

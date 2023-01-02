@@ -6,11 +6,30 @@ export type NextApiRequestWithUser = NextApiRequest & { headers: { email: string
 
 type AllowedMethod = 'GET' | 'POST';
 
+
+export const isAdmin = (email: string | null | undefined) => {
+    console.log('checking if admin', email);
+    if (!email) return false;
+    const adminEmails = process.env.NEXT_PUBLIC_RESHRD_ADMIN_EMAIL?.split(',') || [];
+    console.log('admin emails', adminEmails);
+
+    return adminEmails.includes(email);
+}
 export const validateMethod = (method: AllowedMethod): Middleware => async (req, res, next) => {
     if (req.method !== method) {
         return res.status(405).json({message: 'Method not allowed'});
     }
     await next();
+}
+
+export async function getTokenInfo(token: string) {
+    let decodedToken;
+    try {
+        decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
+    } catch (e) {
+        return null;
+    }
+    return decodedToken;
 }
 
 export const validateUser: Middleware = async (req, res, next) => {
@@ -24,8 +43,8 @@ export const validateUser: Middleware = async (req, res, next) => {
     }
 
     try {
-        const tokenInfo = await firebaseAdmin.auth().verifyIdToken(token);
-        if (!tokenInfo.email) {
+        const tokenInfo = await getTokenInfo(token);
+        if (!tokenInfo || !tokenInfo.email) {
             console.log('validate user - no email found');
             res.status(401).json({message: 'Unauthorized'});
             return;

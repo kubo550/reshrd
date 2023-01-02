@@ -3,6 +3,8 @@ import {getCustomers} from "../../infrastructure/firebase";
 import {use} from "next-api-route-middleware";
 import {validateMethod, validateUser} from "../../utils/validateUser";
 import {Product} from "../../types/products";
+import {firestore} from "firebase-admin";
+import DocumentData = firestore.DocumentData;
 
 type ReportData = {
     'Shopify Order ID': string,
@@ -17,6 +19,25 @@ function toCSV(data: ReportData[]): string {
     return [header, ...rows].join('\n');
 }
 
+function extractReportData(customersData: DocumentData[]) {
+    const data = [] as ReportData[];
+
+    console.log('Generating report - Processing customers data...');
+
+    customersData.forEach(customer => {
+        customer.items.forEach((item: Product) => {
+            data.push({
+                'Shopify Order ID': item?.orderId || '',
+                'Item Name': item?.title || '',
+                'Item SKU': item?.sku || '',
+                'QR Code': item?.codeId || '',
+            })
+        })
+    });
+    return data;
+}
+
+
 export default use(validateMethod('GET'), validateUser,  async (
     req: NextApiRequest,
     res: NextApiResponse
@@ -25,20 +46,7 @@ export default use(validateMethod('GET'), validateUser,  async (
 
     try {
         const customersData = await getCustomers();
-        const data = [] as ReportData[];
-
-        console.log('Generating report - Processing customers data...');
-
-        customersData.forEach(customer => {
-            customer.items.forEach((item: Product) => {
-                data.push({
-                    'Shopify Order ID': item?.orderId || '',
-                    'Item Name': item?.title || '',
-                    'Item SKU': item?.sku || '',
-                    'QR Code': item?.codeId || '',
-                })
-            })
-        });
+        const data = extractReportData(customersData);
 
         console.log('Generating report - Processing customers data... Done');
 
