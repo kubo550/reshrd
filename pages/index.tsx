@@ -29,6 +29,7 @@ export default function Index(props: any) {
         <ProtectedRoute token={props?.cookies.token}>
             <Head>
                 <title>Your items - Updateable QR Clothing Control Panel | RESHRD</title>
+                <meta name="robots" content="index"/>
             </Head>
             <div>
                 <Container minH={'88vh'} maxW={'7xl'} p="12">
