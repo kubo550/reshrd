@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import {ExternalLinkIcon} from "@chakra-ui/icons";
 import {FC, useEffect} from "react";
-import {useAuth} from "../../context/AuthContext";
 import {ApiClient} from "../api";
 import {useForm} from "react-hook-form";
 import * as yup from "yup";
@@ -31,14 +30,13 @@ type ProductFormInputs = {
 }
 
 const schema = yup.object().shape({
-    name: yup.string().max(50),
+    name: yup.string().max(50).notRequired(),
     redirectUrl: yup.string().url().max(500),
 });
 
 
 export const ProductItem: FC<ProductItemProps> = ({product}) => {
     const {title, name, imageUrl, linkUrl, codeId} = product;
-    const {getCurrentUserToken} = useAuth();
 
     const toast = useToast();
 
@@ -50,7 +48,11 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
         formState: {errors, isSubmitting, isDirty}
     } = useForm<ProductFormInputs>({
         resolver: yupResolver(schema),
-        mode: 'all'
+        mode: 'all',
+        defaultValues: {
+            name,
+            redirectUrl: linkUrl
+        }
     })
 
     useEffect(() => {
@@ -61,9 +63,8 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
 
     const handleSaveItem = async ({redirectUrl, name}: ProductFormInputs) => {
         try {
-            const token = await getCurrentUserToken() || '';
-            const apiClient = new ApiClient(token);
-            const {item} = await apiClient.updateItem({codeId, name, linkUrl: redirectUrl});
+            const apiClient = new ApiClient();
+            const {item} = await apiClient.updateItem({codeId, name: name.trim(), linkUrl: redirectUrl.trim()});
 
             toast({
                 title: "Item updated",
@@ -145,7 +146,7 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
                         #{codeId}
                     </Tag>
 
-                    <Link href={`https://qr.reshrd.com/${codeId}`} title={'Check it out'}>
+                    <Link href={`https://qr.reshrd.com/${codeId}`} target={'_blank'} rel={'noreferrer'} title={'Check it out'}>
                         <ExternalLinkIcon marginBottom={'6px'}/>
                     </Link>
                 </HStack>
@@ -168,7 +169,6 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
                                     }}
                                     borderColor={useColorModeValue('gray.300', 'gray.700')}
                                     type={'text'}
-                                    required
                                     placeholder={'My super cool product...'}
                                     aria-label={'Name the product'}
                                 />
@@ -191,6 +191,11 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
                                     required
                                     placeholder={'e.g. https://www.google.com'}
                                     aria-label={'Redirect link'}
+                                    marginBottom={{
+                                        base: '5',
+                                        sm: '3',
+                                        md: '4'
+                                    }}
                                 />
                                 <Text color={'red.400'}>
                                     {errors.redirectUrl && errors.redirectUrl.message}
@@ -198,17 +203,18 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
                             </FormControl>
 
 
-                            {
-                                isDirty && (
-                                    <Button type={'submit'} px={4} marginLeft={'1%'} fontSize={'sm'} rounded={'full'}
-                                            bg={'green.400'} color={'white'}
-                                            minWidth={'127px'} _hover={{bg: 'green.500',}} marginTop={'8px'}
-                                            _focus={{bg: 'green.500',}}
-                                            isLoading={isSubmitting}
-                                    >
-                                        Save
-                                    </Button>)
-                            }
+
+                            <Button
+                                type={'submit'} px={4} marginLeft={'1%'} fontSize={'sm'} rounded={'full'}
+                                    bg={'green.400'} color={'white'}
+                                    minWidth={'127px'} _hover={{bg: 'green.500'}}
+                                    _focus={{bg: 'green.500',}}
+                                    isLoading={isSubmitting}
+                                disabled={!isDirty}
+                            >
+                                Save
+                            </Button>
+
 
                             <Box display={{base: 'block', sm: 'none'}} >
                                 <hr style={{margin: '15px 0'}}/>
