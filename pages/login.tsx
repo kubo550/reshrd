@@ -116,6 +116,7 @@ export default function Login() {
                                         <FormLabel htmlFor="password">Password</FormLabel>
                                         <InputGroup>
                                             <Input id="password"
+                                                   placeholder={'********'}
                                                    type={showingPass ? 'text' : 'password'} {...register('password')} />
 
                                             <InputRightElement h={'full'}>
