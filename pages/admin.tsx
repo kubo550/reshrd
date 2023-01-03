@@ -9,7 +9,6 @@ import {
     Stack,
 } from '@chakra-ui/react';
 import {ApiClient} from "../components/api";
-import {useAuth} from "../context/AuthContext";
 import Head from "next/head";
 import {GetServerSideProps} from "next";
 import nookies from "nookies";
@@ -27,17 +26,15 @@ function download(data: any, filename: string, type: string) {
 export default function Admin() {
     const [isReportLoading, setIsReportLoading] = useState(false);
 
-    const {getCurrentUserToken} = useAuth();
     const handleDownloadReport = useCallback(async () => {
         setIsReportLoading(true);
 
-        const token = await getCurrentUserToken() || '';
-        const apiClient = new ApiClient(token);
+        const apiClient = new ApiClient();
         const reportData = await apiClient.getReport();
 
         download(reportData, 'report', 'csv');
         setIsReportLoading(false);
-    }, [getCurrentUserToken]);
+    }, []);
 
 
     return (

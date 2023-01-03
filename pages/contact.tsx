@@ -20,7 +20,7 @@ const initialTouched = {message: false, email: false, subject: false};
 
 
 export default function Contact() {
-    const {currentUser, getCurrentUserToken} = useAuth();
+    const {currentUser} = useAuth();
     const initValues = {email: currentUser?.email || "", subject: "", message: ""};
     const initState = {isLoading: false, error: "", values: initValues};
 
@@ -49,8 +49,7 @@ export default function Contact() {
             isLoading: true,
         }));
         try {
-            const token = await getCurrentUserToken() || '';
-            const apiClient = new ApiClient(token);
+            const apiClient = new ApiClient();
             await apiClient.sendContactForm(values);
 
             setTouched(initialTouched);

@@ -15,8 +15,7 @@ export default function Index(props: any) {
 
 
     async function getItemsQuery() {
-        const token = await getCurrentUserToken() || '';
-        const apiClient = new ApiClient(token);
+        const apiClient = new ApiClient();
         return await apiClient.getItems();
     }
 
