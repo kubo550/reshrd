@@ -32,7 +32,7 @@ const navItems = [
     },
     {
         label: 'How does it work',
-        href: '/howitworks',
+        href: 'https://reshrd.com/pages/how-changeable-qr-code-clothing-works',
         protected: false,
     },
     {

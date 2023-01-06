@@ -22,6 +22,7 @@ export const sendInvitationEmail = async (email: string) => {
     };
 
     await emailService.send(emailConfig);
+    console.log('email sent to ', email);
 }
 
 
@@ -36,6 +37,7 @@ export const sendEmailToOldCustomer = async (email: string) => {
         };
 
         await emailService.send(emailConfig);
+        console.log('email sent to ', email);
 }
 
 export const sendRegistrationEmail = async (email: string, isUser: boolean) => {
@@ -48,4 +50,5 @@ export const sendRegistrationEmail = async (email: string, isUser: boolean) => {
         };
 
         await emailService.send(emailConfig);
+        console.log('email sent to ', email);
 }

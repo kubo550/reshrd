@@ -40,7 +40,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        const customerEmail = 'test@wp.pl';
+        const customerEmail = 'janek.br@gmail.com';
         // const customerEmail = req.body.customer.email
 
         const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
@@ -49,11 +49,11 @@ export default async function handler(
 
         if (!customer) {
             console.log('customer not found, creating new one');
-            await createNewCustomer(customerEmail, customerNewProducts);
+            // await createNewCustomer(customerEmail, customerNewProducts);
             await sendInvitationEmail(customerEmail);
         } else {
             console.log('customer found, updating');
-            await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
+            // await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
             await sendEmailToOldCustomer(customerEmail);
         }
 
