@@ -23,6 +23,7 @@ import {GetServerSidePropsContext} from "next";
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import {sendRegistrationEmail} from "../infrastructure/email-utils";
 
 type RegisterFormInputs = {
     email: string;
@@ -75,6 +76,7 @@ export default function Register({reqEmail}: { reqEmail: string }) {
         try {
             await registerAccount(data.email, data.password);
             setAccountCreated(true);
+            await sendRegistrationEmail(data.email);
             router.push('/');
         } catch (e) {
             console.log(e);

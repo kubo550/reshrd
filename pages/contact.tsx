@@ -70,7 +70,7 @@ export default function Contact() {
             setState((prev) => ({
                 ...prev,
                 isLoading: false,
-                error: (error as any).message,
+                error: 'Error sending message, please try again later',
             }));
         }
     };

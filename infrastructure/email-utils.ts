@@ -1,5 +1,6 @@
 import {EmailService} from "./email-service";
 import {generateHTMLTemplate} from "./email-templates/templates";
+import {getCustomers} from "./firebase";
 
 
 const emailService = new EmailService(
@@ -40,7 +41,10 @@ export const sendEmailToOldCustomer = async (email: string) => {
         console.log('email sent to ', email);
 }
 
-export const sendRegistrationEmail = async (email: string, isUser: boolean) => {
+export const sendRegistrationEmail = async (email: string) => {
+
+        const customers = await getCustomers();
+        const isUser = customers.find(customer => customer.email === email);
 
         const emailConfig = {
             from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
