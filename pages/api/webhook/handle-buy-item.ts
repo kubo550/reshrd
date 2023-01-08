@@ -4,6 +4,7 @@ import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../../../in
 import {Product, ShopifyItem} from "../../../types/products";
 import {sendEmailToOldCustomer, sendInvitationEmail} from "../../../infrastructure/email-utils";
 
+// https://my.reshrd.com/api/webhook/handle-buy-item
 
 const getImageUrl = (sku: string) => `https://cdn.shopify.com/s/files/1/0671/8187/1393/files/${sku.slice(0, -1)}.jpg`;
 
@@ -29,7 +30,15 @@ async function getMappedItems(items: ShopifyItem[], orderNumber: string) {
         return [];
     }
     const mappedItems = [];
-    for (const item of items) {
+
+    const allItems = items.reduce((acc, item) => {
+        const quantity = item.quantity;
+        const newItem = {...item, quantity: 1};
+        const newItems = Array(quantity).fill(newItem);
+        return [...acc, ...newItems];
+    }, [] as ShopifyItem[]);
+
+    for (const item of allItems) {
         const mappedItem = await toDbItemsFormat(item);
         mappedItems.push({...mappedItem, orderId: orderNumber});
     }
@@ -51,9 +60,7 @@ export default async function handler(
         if (!customer) {
             console.log('customer not found, creating new one');
             await createNewCustomer(customerEmail, customerNewProducts);
-            console.log('customer created');
             await sendInvitationEmail(customerEmail);
-            console.log('email sent');
         } else {
             console.log('customer found, updating');
             await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
