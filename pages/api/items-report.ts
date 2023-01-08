@@ -11,6 +11,8 @@ type ReportData = {
     'Item Name': string,
     'Item SKU': string,
     'QR Code': string,
+    'Modified Count': number
+    'Link URL': string,
 }
 
 function toCSV(data: ReportData[]): string {
@@ -31,6 +33,8 @@ function extractReportData(customersData: DocumentData[]) {
                 'Item Name': item?.title || '',
                 'Item SKU': item?.sku || '',
                 'QR Code': item?.codeId || '',
+                'Link URL': item?.linkUrl || '',
+                'Modified Count': item?.modifiedCount || 0,
             })
         })
     });

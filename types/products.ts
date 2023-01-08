@@ -5,8 +5,9 @@ export type Product = {
     name: string,
     orderId: string
     productId: string,
-    sku: string
+    sku: string,
     title: string,
+    modifiedCount?: number
 }
 
 

@@ -49,10 +49,14 @@ export async function updateItem(email: string, codeId: string, newName: string,
         console.log('updateItem: item not found');
         return
     }
+
+    if (item.linkUrl !== newLinkUrl) {
+        item.modifiedCount = item.modifiedCount + 1;
+    }
+
     item.name = newName;
     item.linkUrl = newLinkUrl;
 
-    console.log(item)
 
     await updateDoc(customerDoc, {
         items

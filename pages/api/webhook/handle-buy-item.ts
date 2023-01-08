@@ -1,24 +1,25 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {generateCodeId} from "../../../infrastructure/generateCode";
 import {createNewCustomer, getCustomerByEmail, updateCustomer} from "../../../infrastructure/firebase";
-import {ShopifyItem} from "../../../types/products";
+import {Product, ShopifyItem} from "../../../types/products";
 import {sendEmailToOldCustomer, sendInvitationEmail} from "../../../infrastructure/email-utils";
 
 
 const getImageUrl = (sku: string) => `https://cdn.shopify.com/s/files/1/0671/8187/1393/files/${sku.slice(0, -1)}.jpg`;
 
-const toDbItemsFormat = async (item: ShopifyItem) => {
+const toDbItemsFormat = async (item: ShopifyItem): Promise<Omit<Product, 'orderId'>> => {
 
     const codeId = await generateCodeId();
 
     return {
         codeId,
-        title: item.name,
-        productId: item.product_id,
         imageUrl: getImageUrl(item.sku),
         linkUrl: 'https://reshrd.com/',
         name: '',
-        sku: item.sku
+        title: item.name,
+        productId: item.product_id,
+        sku: item.sku,
+        modifiedCount: 0,
     }
 };
 
