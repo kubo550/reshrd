@@ -34,7 +34,12 @@ export const sendEmailToOldCustomer = async (email: string) => {
             from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
             to: email,
             subject: 'New item has joined the party | RESHRD',
-            html: generateHTMLTemplate.alreadyUser()
+            html: generateHTMLTemplate.alreadyUser(),
+            attachments: [{
+                filename: 'logo.png',
+                path: `${process.cwd()}/public/logo.png`,
+                cid: 'logo'
+            }]
         };
 
         await emailService.send(emailConfig);
@@ -50,7 +55,12 @@ export const sendRegistrationEmail = async (email: string) => {
             from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
             to: email,
             subject: 'Thanks for registering! | RESHRD',
-            html: isUser ? generateHTMLTemplate.registrationUser() : generateHTMLTemplate.registrationNotUser()
+            html: isUser ? generateHTMLTemplate.registrationUser() : generateHTMLTemplate.registrationNotUser(),
+            attachments: [{
+                filename: 'logo.png',
+                path: `${process.cwd()}/public/logo.png`,
+                cid: 'logo'
+            }]
         };
 
         await emailService.send(emailConfig);

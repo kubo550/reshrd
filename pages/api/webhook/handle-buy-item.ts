@@ -41,7 +41,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        // const customerEmail = 'janek.br@gmail.com';
+        // const customerEmail = 'qwercy142@gmail.com';
         const customerEmail = req.body.customer.email
 
         const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
@@ -51,16 +51,19 @@ export default async function handler(
         if (!customer) {
             console.log('customer not found, creating new one');
             await createNewCustomer(customerEmail, customerNewProducts);
+            console.log('customer created');
             await sendInvitationEmail(customerEmail);
+            console.log('email sent');
         } else {
             console.log('customer found, updating');
             await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
             await sendEmailToOldCustomer(customerEmail);
         }
 
+        res.status(200).json({status: 'ok'});
 
-        res.status(200).json({success: true})
     } catch (e) {
+        console.log('ERROR')
         console.error(e)
         res.status(500).json({success: false})
     }
