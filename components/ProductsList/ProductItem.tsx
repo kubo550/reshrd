@@ -133,7 +133,7 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
                 <Heading marginTop={{base: '1', sm: '5'}}
                          marginBottom={{base: '1', sm: '5'}}>
                     <Link textDecoration="none" _hover={{textDecoration: 'none', cursor: 'text'}}>
-                        {title}
+                        {title.split(' - ')[0]}
                     </Link>
                 </Heading>
 

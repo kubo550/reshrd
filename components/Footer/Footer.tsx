@@ -24,7 +24,7 @@ export const Footer = () => {
                     spacing={4}
                     justify={{base: 'center', md: 'space-between'}}
                     align={{base: 'center', md: 'center'}}>
-                    <Text>© 2022 RESHRD</Text>
+                    <Text>© 2023 RESHRD</Text>
 
                     <Text display={{default: 'none', md: 'block'}}>
                         Powered by{' '} <a href="https://www.linkedin.com/in/jakub-kurdziel-449714205/"

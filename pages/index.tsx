@@ -1,10 +1,9 @@
-
 import {ProtectedRoute} from "../components/ProtectedRoute/ProtectedRoute";
 import {useQuery} from "react-query";
 import {useAuth} from "../context/AuthContext";
 import {ApiClient} from "../components/api";
 import {ProductList} from "../components/ProductsList/ProductList";
-import {Container, Spinner, Text} from "@chakra-ui/react";
+import {Container, Link, Spinner, Text} from "@chakra-ui/react";
 import Head from "next/head";
 import {GetServerSideProps} from "next";
 import nookies from "nookies";
@@ -19,7 +18,7 @@ export default function Index(props: any) {
         return await apiClient.getItems();
     }
 
-    const {data, isLoading, isError} = useQuery('items',  getItemsQuery, {
+    const {data, isLoading, isError} = useQuery('items', getItemsQuery, {
         enabled: !!getCurrentUserToken,
         refetchOnWindowFocus: false,
     });
@@ -37,10 +36,18 @@ export default function Index(props: any) {
 
                     {isError && <p>Error</p>}
 
-                    {data && <ProductList products={data.items} />}
+                    {data && <ProductList products={data.items}/>}
 
                     {
-                        data && data.items.length === 0 && <Text>You don&lsquo;t have any items yet</Text>
+                        data && data.items.length === 0 && <Text marginTop={12}>
+                            You don’t have any items yet — <Link href={'https://reshrd.com/discont/DoraTheExplora15'}
+                                                                 target={'_blank'}
+                                                                 rel={'noopener noreferrer'}
+                                                                 color={
+                                                                     'blue.500'
+                                                                 }> click here </Link> to head over to our store and find
+                            yourself something special
+                        </Text>
                     }
 
                 </Container>
