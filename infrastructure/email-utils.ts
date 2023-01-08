@@ -17,7 +17,7 @@ export const sendInvitationEmail = async (email: string) => {
         html: generateHTMLTemplate.newUser(email),
         attachments: [{
             filename: 'logo.png',
-            path: `${process.cwd()}/public/logo.png`,
+            path: 'https://eoq.soundestlink.com/image/newsletter/6366e56f7c36a9001d08e0be',
             cid: 'logo'
         }]
     };
@@ -37,7 +37,7 @@ export const sendEmailToOldCustomer = async (email: string) => {
             html: generateHTMLTemplate.alreadyUser(),
             attachments: [{
                 filename: 'logo.png',
-                path: `${process.cwd()}/public/logo.png`,
+                path: `https://eoq.soundestlink.com/image/newsletter/6366e56f7c36a9001d08e0be`,
                 cid: 'logo'
             }]
         };
@@ -58,7 +58,7 @@ export const sendRegistrationEmail = async (email: string) => {
             html: isUser ? generateHTMLTemplate.registrationUser() : generateHTMLTemplate.registrationNotUser(),
             attachments: [{
                 filename: 'logo.png',
-                path: `${process.cwd()}/public/logo.png`,
+                path: `https://eoq.soundestlink.com/image/newsletter/6366e56f7c36a9001d08e0be`,
                 cid: 'logo'
             }]
         };
