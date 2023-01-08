@@ -23,7 +23,7 @@ import {GetServerSidePropsContext} from "next";
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {sendRegistrationEmail} from "../infrastructure/email-utils";
+import {ApiClient} from "../components/api";
 
 type RegisterFormInputs = {
     email: string;
@@ -76,7 +76,7 @@ export default function Register({reqEmail}: { reqEmail: string }) {
         try {
             await registerAccount(data.email, data.password);
             setAccountCreated(true);
-            await sendRegistrationEmail(data.email);
+            await ApiClient.sendRegistrationEmail(data.email);
             router.push('/');
         } catch (e) {
             console.log(e);
@@ -165,7 +165,7 @@ export default function Register({reqEmail}: { reqEmail: string }) {
                                             </FormControl>
 
                                             <FormControl isInvalid={!!errors.confirmPassword}>
-                                                <FormLabel htmlFor="confirmPassword">Password</FormLabel>
+                                                <FormLabel htmlFor="confirmPassword">Confirm password</FormLabel>
                                                 <InputGroup>
                                                     <Input id="confirmPassword"
                                                            placeholder={'********'}

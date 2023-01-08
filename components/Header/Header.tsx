@@ -82,17 +82,17 @@ export function Header() {
                     flex={{base: 1, md: 'auto'}}
                     ml={{base: -2}}
                     display={{base: 'flex', md: 'none'}}>
-                        <IconButton onClick={onToggle}
-                                    icon={isOpen ? <CloseIcon w={3} h={3}/> : <HamburgerIcon w={5} h={5}/>}
-                                    variant={'ghost'}
-                                    aria-label={'Toggle Navigation'}
-                        />
+                    <IconButton onClick={onToggle}
+                                icon={isOpen ? <CloseIcon w={3} h={3}/> : <HamburgerIcon w={5} h={5}/>}
+                                variant={'ghost'}
+                                aria-label={'Toggle Navigation'}
+                    />
                 </Flex>
                 <Flex flex={{base: 1}} justify={{base: 'center', md: 'start'}}>
                     <NextLink href={currentUser ? '/' : '/login'}>
-                            <div>
-                                <Image src={'/logo_white_200x.png'} alt="logo" width={150} height={21}/>
-                            </div>
+                        <div>
+                            <Image src={'/logo_white_200x.png'} alt="logo" width={150} height={21}/>
+                        </div>
                     </NextLink>
 
                     <Flex display={{base: 'none', md: 'flex'}} mx={'auto'}>
@@ -164,7 +164,16 @@ const DesktopNav = () => {
                         <Popover trigger={'hover'} placement={'bottom-start'}>
                             <PopoverTrigger>
                                 {isExternal ? (
-                                    <Link href={navItem.href} target={'_blank'} rel={'noreferrer'}>
+                                    <Link p={2}
+                                          fontSize={'sm'}
+                                          fontWeight={500}
+                                          color={isCurrent ? linkActiveColor : linkColor}
+                                          _hover={{
+                                              textDecoration: 'none',
+                                              color: linkHoverColor,
+                                          }}
+                                          as={NextLink}
+                                          href={navItem.href} target={'_blank'} rel={'noreferrer'}>
                                         {navItem.label}
                                     </Link>
                                 ) : (
@@ -203,26 +212,52 @@ const MobileNav: FC<{ hideMenu: () => void }> = ({hideMenu}) => {
     );
 };
 
-type MobileNavItemProps = { label: string, href: string, hideMenu: () => void };
-const MobileNavItem: FC<MobileNavItemProps> = ({label, href, hideMenu}) => {
+type MobileNavItemProps = { label: string, href: string, hideMenu: () => void, protected?: boolean };
+const MobileNavItem: FC<MobileNavItemProps> = ({label, href, hideMenu, protected: isProtected}) => {
+    const linkColor = useColorModeValue('gray.600', 'gray.200');
+    const linkHoverColor = useColorModeValue('gray.800', 'white');
+    const linkActiveColor = useColorModeValue('gray.900', 'black.300');
+
+    const router = useRouter()
+
+
+    const isCurrentPath = (path: string) => {
+        return router.pathname === path
+    }
     const isExternal = href.startsWith('http');
 
 
-    const color = useColorModeValue('gray.600', 'gray.200');
+    const isCurrent = isCurrentPath(href);
+    const {currentUser} = useAuth();
     return (
         <Stack spacing={4}>
             {
                 isExternal ? (
-                    <Link href={href} target={'_blank'} rel={'noreferrer'} fontWeight={600} color={color}>
+                    <Link href={href} p={2}
+                          fontSize={'sm'}
+                          fontWeight={500}
+                          color={isCurrent ? linkActiveColor : linkColor}
+                          _hover={{
+                              textDecoration: 'none',
+                              color: linkHoverColor,
+                          }} target={'_blank'} rel={'noreferrer'}>
                         {label}
                     </Link>
                 ) : (
-                    <NextLink href={href} onClick={hideMenu}>
-                        <Flex py={2} justify={'space-between'} align={'center'}
-                              _hover={{textDecoration: 'none',}} fontWeight={600} color={color}>
-                            {label}
-                        </Flex>
-                    </NextLink>
+                    <Link as={NextLink}
+                          href={isProtected ? !!currentUser ? href : '/login' : href}
+                          onClick={hideMenu}
+                          p={2}
+                          fontSize={'sm'}
+                          fontWeight={500}
+                          color={isCurrent ? linkActiveColor : linkColor}
+                          _hover={{
+                              textDecoration: 'none',
+                              color: linkHoverColor,
+                          }}
+                    >
+                        {label}
+                    </Link>
                 )
             }
 

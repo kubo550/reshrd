@@ -35,6 +35,15 @@ export class ApiClient {
         return data;
     }
 
+   static async sendRegistrationEmail(email: string) {
+        const {data} = await axios.post(`/api/registration-mail`, {email}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return data
+    }
+
     getAuthorization() {
         const cookies = nookies.get(null, 'token');
         return {
