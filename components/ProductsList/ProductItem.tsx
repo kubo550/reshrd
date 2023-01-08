@@ -31,7 +31,7 @@ type ProductFormInputs = {
 
 const schema = yup.object().shape({
     name: yup.string().max(50).notRequired(),
-    redirectUrl: yup.string().url().max(500),
+    redirectUrl: yup.string().url("The text must be a valid link. You must include the “https://” or “http://").max(500),
 });
 
 
@@ -189,7 +189,7 @@ export const ProductItem: FC<ProductItemProps> = ({product}) => {
                                     borderColor={useColorModeValue('gray.300', 'gray.700')}
                                     type={'text'}
                                     required
-                                    placeholder={'e.g. https://www.google.com'}
+                                    placeholder={'e.g. https://google.com'}
                                     aria-label={'Redirect link'}
                                     marginBottom={{
                                         base: '5',
