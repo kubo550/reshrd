@@ -51,7 +51,7 @@ export async function updateItem(email: string, codeId: string, newName: string,
     }
 
     if (item.linkUrl !== newLinkUrl) {
-        item.modifiedCount = item.modifiedCount + 1;
+        item.modifiedCount = parseInt( item.modifiedCount || 0,10)  + 1;
     }
 
     item.name = newName;
