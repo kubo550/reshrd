@@ -13,7 +13,7 @@ export const sendInvitationEmail = async (email: string) => {
     const emailConfig = {
         from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
         to: email,
-        subject: 'Get access to your updateable QR Clothing | RESHRD\n',
+        subject: 'Get access to your updateable QR Clothing | RESHRD',
         html: generateHTMLTemplate.newUser(email),
         attachments: [{
             filename: 'logo.png',
