@@ -48,15 +48,19 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    console.log('handle-buy-item - new request');
     try {
-        // const customerEmail = 'test@wp.pl';
+        // const customerEmail = 'kubo550@wp.pl';
         const customerEmail = req.body.customer.email
+        console.log('handle-buy-item - customerEmail', customerEmail);
+
+        const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
+        console.log('handle-buy-item - customerNewProducts.length', customerNewProducts.length);
 
         res.status(200).json({status: 'ok'});
 
-        const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
-
         const customer = await getCustomerByEmail(customerEmail);
+        console.log('handle-buy-item - got customer');
 
         if (!customer) {
             console.log('customer not found, creating new one');
@@ -68,10 +72,16 @@ export default async function handler(
             await sendEmailToOldCustomer(customerEmail);
         }
 
+
         return
     } catch (e) {
         console.log('ERROR')
         console.error(e)
+        try {
+            res.status(200).json({status: 'error'});
+        } catch (e) {
+            console.error(e)
+        }
         return
     }
 }
