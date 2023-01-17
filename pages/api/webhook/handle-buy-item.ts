@@ -49,8 +49,10 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        // const customerEmail = 'qwercy142@gmail.com';
+        // const customerEmail = 'test@wp.pl';
         const customerEmail = req.body.customer.email
+
+        res.status(200).json({status: 'ok'});
 
         const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
 
@@ -66,12 +68,10 @@ export default async function handler(
             await sendEmailToOldCustomer(customerEmail);
         }
 
-        res.status(200).json({status: 'ok'});
         return
     } catch (e) {
         console.log('ERROR')
         console.error(e)
-        res.status(200).json({status: 'ok'});
         return
     }
 }
