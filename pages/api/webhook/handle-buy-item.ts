@@ -44,6 +44,25 @@ async function getMappedItems(items: ShopifyItem[], orderNumber: string) {
     return mappedItems;
 }
 
+async function extracted(req: NextApiRequest, res: any, customerEmail: string) {
+    console.log('Starting sync job');
+    const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
+    console.log('handle-buy-item - customerNewProducts.length', customerNewProducts.length);
+
+    const customer = await getCustomerByEmail(customerEmail);
+    console.log('handle-buy-item - got customer');
+
+    if (!customer) {
+        console.log('customer not found, creating new one');
+        await createNewCustomer(customerEmail, customerNewProducts);
+        await sendInvitationEmail(customerEmail);
+    } else {
+        console.log('customer found, updating');
+        await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
+        await sendEmailToOldCustomer(customerEmail);
+    }
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -54,34 +73,13 @@ export default async function handler(
         const customerEmail = req.body.customer.email
         console.log('handle-buy-item - customerEmail', customerEmail);
 
-        const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
-        console.log('handle-buy-item - customerNewProducts.length', customerNewProducts.length);
-
+        extracted(req, res, customerEmail);
         res.status(200).json({status: 'ok'});
-
-        const customer = await getCustomerByEmail(customerEmail);
-        console.log('handle-buy-item - got customer');
-
-        if (!customer) {
-            console.log('customer not found, creating new one');
-            await createNewCustomer(customerEmail, customerNewProducts);
-            await sendInvitationEmail(customerEmail);
-        } else {
-            console.log('customer found, updating');
-            await updateCustomer(customer as any, [...customer.items, ...customerNewProducts]);
-            await sendEmailToOldCustomer(customerEmail);
-        }
-
 
         return
     } catch (e) {
         console.log('ERROR')
         console.error(e)
-        try {
-            res.status(200).json({status: 'error'});
-        } catch (e) {
-            console.error(e)
-        }
         return
     }
 }
