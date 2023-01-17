@@ -55,7 +55,6 @@ export default async function handler(
         console.log('handle-buy-item - customerEmail', customerEmail);
 
         const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);
-        console.log('handle-buy-item - customerNewProducts.length', customerNewProducts.length);
 
         const customer = await getCustomerByEmail(customerEmail);
         console.log('handle-buy-item - got customer', customer);
