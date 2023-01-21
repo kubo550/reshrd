@@ -50,8 +50,9 @@ export default async function handler(
 ) {
     try {
         console.log('handle-buy-item - new request');
-        // const customerEmail = 'kubo550@wp.pl';
+        // const customerEmail = 'test@wp.pl';
         const customerEmail = req.body.customer.email
+
         console.log('handle-buy-item - customerEmail', customerEmail);
 
         const customerNewProducts = await getMappedItems(req.body.line_items, req.body.order_number);

@@ -1,6 +1,7 @@
 import axios from "axios";
 import {Product} from "../types/products";
 import nookies from "nookies";
+import {NextApiRequest} from "next";
 
 export class ApiClient {
     constructor() {
@@ -42,6 +43,15 @@ export class ApiClient {
             }
         });
         return data
+    }
+
+    static async triggerWebhook(body: NextApiRequest['body']) {
+        const baseUrl = process.env.BASE_API_URL || 'http://localhost:3000';
+        await axios.post(`${baseUrl}/api/webhook/handle-buy-item`, body, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 
     getAuthorization() {
