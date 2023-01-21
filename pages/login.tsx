@@ -83,7 +83,7 @@ export default function Login() {
                             <Stack align={'center'}>
                                 <Heading fontSize={{sm: 'xl', md: '4xl'}}>Sign in</Heading>
                                 <Text fontSize={{sm: 'sm', md: 'lg'}} color={'gray.600'}>
-                                    to manage your reshrd items ✌️
+                                    to manage your RESHRD items ✌️
                                 </Text>
                             </Stack>
 

@@ -112,7 +112,7 @@ export default function Register({reqEmail}: { reqEmail: string }) {
                                             Sign up
                                         </Heading>
                                         <Text fontSize={{sm: 'sm', md: 'lg'}} color={'gray.600'}>
-                                            to manage your reshrd items ✌️
+                                            to manage your RESHRD items ✌️
                                         </Text>
                                     </Stack>
 
