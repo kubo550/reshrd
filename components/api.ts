@@ -46,8 +46,8 @@ export class ApiClient {
     }
 
     static async triggerWebhook(body: NextApiRequest['body']) {
-        const baseUrl = process.env.BASE_API_URL || 'http://localhost:3000';
-        await axios.post(`${baseUrl}/api/webhook/handle-buy-item`, body, {
+        console.log('triggerWebhook');
+        await axios.post(`https://my.reshrd.com/api/webhook/handle-buy-item`, body, {
             headers: {
                 'Content-Type': 'application/json'
             }
