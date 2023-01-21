@@ -11,7 +11,7 @@ const emailService = new EmailService(
 export const sendInvitationEmail = async (email: string) => {
 
     const emailConfig = {
-        from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
+        from: displayEmail(),
         to: email,
         subject: 'Get access to your updateable QR Clothing | RESHRD',
         html: generateHTMLTemplate.newUser(email),
@@ -31,7 +31,7 @@ export const sendInvitationEmail = async (email: string) => {
 export const sendEmailToOldCustomer = async (email: string) => {
 
         const emailConfig = {
-            from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
+            from: displayEmail(),
             to: email,
             subject: 'New item has joined the party | RESHRD',
             html: generateHTMLTemplate.alreadyUser(),
@@ -52,7 +52,7 @@ export const sendRegistrationEmail = async (email: string) => {
         const isUser = customers.find(customer => customer.email === email);
 
         const emailConfig = {
-            from: process.env.NEXT_PUBLIC_RESHRD_EMAIL!,
+            from: displayEmail(),
             to: email,
             subject: 'Thanks for registering! | RESHRD',
             html: isUser ? generateHTMLTemplate.registrationUser() : generateHTMLTemplate.registrationNotUser(),
@@ -65,4 +65,8 @@ export const sendRegistrationEmail = async (email: string) => {
 
         await emailService.send(emailConfig);
         console.log('email sent to ', email);
+}
+
+function displayEmail() {
+   return `RESHRD team <${process.env.NEXT_PUBLIC_RESHRD_EMAIL}>`
 }
