@@ -8,8 +8,8 @@ export default async function handler(
     try {
         console.log('registration mail to', req.body.email);
         const email = req.body.email;
-        await sendRegistrationEmail(email);
-        return res.status(200).json({message: 'ok'});
+        // await sendRegistrationEmail(email);
+        return res.status(200).json({message: 'disabled for now'});
     } catch (e) {
         console.error(e)
         return res.status(500).json({})
