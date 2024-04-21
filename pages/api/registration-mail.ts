@@ -20,6 +20,7 @@ export default async function handler(
         console.log('registration mail to', req.body.email);
         const email = req.body.email;
         await sendRegistrationEmail(email);
+        console.log('registration mail sent to', email);
         return res.status(200).json({message: 'Email sent successfully'});
     } catch (e) {
         console.error(e)
