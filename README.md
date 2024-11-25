@@ -22,4 +22,4 @@ To picture it better:
 The system works 24/7 and changes the link in just a second. Oh, and there are unlimited changes you can make to your QR. So whenever you feel the urge to share something else than you presently are, simply change the link on the QR Control Panel.
 ## Check out live preview
  
- Production [here](https://my.reshrd.com)
+Production [here](https://my.reshrd.com)
