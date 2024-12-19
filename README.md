@@ -1,6 +1,8 @@
 ![preview](https://user-images.githubusercontent.com/43968748/215877466-7265fa88-b8aa-464d-8ab5-a57c9745567a.png)
 
 
+[Reshrd shop](https://reshrd.com/)
+
 ## What is this?
 
 This app is a Control Panel created to change the link to your QR clothing.
