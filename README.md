@@ -1,6 +1,8 @@
 ![preview](https://user-images.githubusercontent.com/43968748/215877466-7265fa88-b8aa-464d-8ab5-a57c9745567a.png)
 
 
+[Reshrd shop](https://reshrd.com/)
+
 ## What is this?
 
 This app is a Control Panel created to change the link to your QR clothing.
@@ -22,4 +24,4 @@ To picture it better:
 The system works 24/7 and changes the link in just a second. Oh, and there are unlimited changes you can make to your QR. So whenever you feel the urge to share something else than you presently are, simply change the link on the QR Control Panel.
 ## Check out live preview
  
- Production [here](https://my.reshrd.com)
+Production [here](https://my.reshrd.com)
