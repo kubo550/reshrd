@@ -7,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 
 export const Footer = () => {
+    const currentYear = new Date().getFullYear();
     return (
         <Box
             bg={useColorModeValue('gray.50', 'gray.900')}
@@ -24,7 +25,7 @@ export const Footer = () => {
                     spacing={4}
                     justify={{base: 'center', md: 'space-between'}}
                     align={{base: 'center', md: 'center'}}>
-                    <Text>© 2023 RESHRD</Text>
+                    <Text>© {currentYear} RESHRD</Text>
 
                     <Text display={{default: 'none', md: 'block'}}>
                         Powered by{' '} <a href="https://www.linkedin.com/in/jakub-kurdziel-449714205/"
