@@ -31,20 +31,6 @@ const theme = extendTheme({config})
 export default function App({Component, pageProps}: AppProps) {
     const [queryClient] = useState(() => new QueryClient());
 
-    const router = useRouter()
-
-    useEffect(() => {
-        import('react-facebook-pixel')
-            .then((x) => x.default)
-            .then((ReactPixel) => {
-                ReactPixel.init('9006653022692930')
-                ReactPixel.pageView()
-
-                router.events.on('routeChangeComplete', () => {
-                    ReactPixel.pageView()
-                })
-            })
-    }, [router.events])
 
     return (<>
             <script
@@ -62,14 +48,6 @@ export default function App({Component, pageProps}: AppProps) {
                 <link rel="icon" href="/favicon.ico"/>
                 <meta name={'robots'} content={'noindex, nofollow'}/>
             </Head>
-            <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-C96BPLFQXN"/>
-            <Script
-                id='google-analytics'
-                strategy="afterInteractive"
-                dangerouslySetInnerHTML={{
-                    __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-C96BPLFQXN');`,
-                }}
-            />
             <noscript>
                 <iframe
                     src="https://www.googletagmanager.com/ns.html?id=GTM-FVTD5G8D"
